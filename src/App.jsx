@@ -1,138 +1,192 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import Aurora from './Aurora';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Welcome_Section from "./Welcome_Section";
+import Services_Section from "./Services_Section";
+import TechStack_Section from "./TechStack_Section";
+import Portfolio_Section from "./Portfolio_Section";
+import WorkExperience_Section from "./WorkExperience_Section";
 
-const App = () => {
-  // Mengambil progres scroll dari halaman
-  const { scrollYProgress } = useScroll();
+// Custom Hook untuk deteksi arah scroll
+const useScrollDirection = () => {
+  const [scrollDirection, setScrollDirection] = useState("up");
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Konfigurasi Animasi Parallax & Opacity
-  // Teks Besar: Bergerak ke atas dan mengecil
-  const textY = useTransform(scrollYProgress, [0, 0.2], [0, -200]);
-  const textScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  useEffect(() => {
+    const updateScrollDirection = () => {
+      const scrollY = window.scrollY;
+      const direction = scrollY > lastScrollY ? "down" : "up";
+      if (direction !== scrollDirection && (scrollY - lastScrollY > 10 || scrollY - lastScrollY < -10)) {
+        setScrollDirection(direction);
+      }
+      setLastScrollY(scrollY > 0 ? scrollY : 0);
+    };
+    window.addEventListener("scroll", updateScrollDirection);
+    return () => window.removeEventListener("scroll", updateScrollDirection);
+  }, [scrollDirection, lastScrollY]);
 
-  // Foto: Bergerak ke atas lebih lambat (Parallax)
-  const imageY = useTransform(scrollYProgress, [0, 0.3], [0, -100]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.3], [1, 1.1]);
+  return scrollDirection;
+};
 
-  // Teks Kecil di Sudut: Menghilang ke samping
-  const leftItemsX = useTransform(scrollYProgress, [0, 0.1], [0, -100]);
-  const rightItemsX = useTransform(scrollYProgress, [0, 0.1], [0, 100]);
-  const cornerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const scrollDirection = useScrollDirection();
+  const [isNavVisible, setIsNavVisible] = useState(true);
+
+  // Logic: Header muncul saat scroll up atau di posisi paling atas
+  useEffect(() => {
+    if (window.scrollY < 20) {
+      setIsNavVisible(true);
+    } else {
+      setIsNavVisible(scrollDirection === "up");
+    }
+  }, [scrollDirection]);
+
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+  // --- ICON COMPONENTS ---
+  const IconInstagram = () => (
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+  );
+  const IconGithub = () => (
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+  );
+  const IconLinkedin = () => (
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+  );
+
+  // --- HELPER COMPONENT SOCIAL LINK ---
+  const SocialLink = ({ href, Icon, label }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        // Hapus class warna statis jika ada, biarkan dia inherit dari parent (container)
+        className="relative flex items-center justify-center hover:text-gray-500 transition-colors duration-300 hover:scale-110 pointer-events-auto"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Icon />
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className={`absolute left-full ml-4 px-3 py-1 rounded text-sm font-bold whitespace-nowrap shadow-lg
+                ${isDarkMode ? "bg-white text-black" : "bg-black text-white"}
+              `}
+            >
+              <div className={`absolute top-1/2 -left-1 -mt-1 border-4 border-transparent 
+                ${isDarkMode ? "border-r-white" : "border-r-black"}
+              `}></div>
+              {label}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </a>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 overflow-x-hidden m-0 p-0">
-      {/* Navbar Minimalis */}
-      <nav className="fixed top-0 left-0 w-full flex justify-between items-center px-10 py-8 z-50 bg-white/80 backdrop-blur-md">
-        <h1 className="text-2xl font-black tracking-tighter uppercase">Milar.</h1>
-        <button className="border border-slate-300 rounded-full px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-          <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Change the mode
-        </button>
-        <div className="space-y-1.5 cursor-pointer group">
-          <div className="w-8 h-0.5 bg-black transition-all group-hover:w-6"></div>
-          <div className="w-8 h-0.5 bg-black"></div>
-        </div>
-      </nav>
+    <div className={`relative min-h-screen transition-colors duration-300 font-sans ${isDarkMode ? "bg-black" : "bg-white"}`}>
 
-      {/* Hero Section */}
-      <section className="relative w-screen h-screen flex items-center justify-center overflow-hidden bg-white">
+      {/* Style Global */}
+      <style>
+        {`
+            @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;700&display=swap');
+            body { 
+                cursor: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 5V19M12 19L5 12M12 19L19 12' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 16 16, auto;
+            }
+            a, button { cursor: pointer; }
+          `}
+      </style>
 
-        {/* Layer 1: Tulisan Latar Belakang */}
-        <motion.div
-          style={{ y: textY, scale: textScale, opacity: textOpacity }}
-          className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none z-0"
-        >
-          <div className="relative">
-            <h2 className="text-[100px] md:text-[180px] font-serif italic leading-none text-black absolute -top-20 md:-top-32 -left-20 md:-left-40">
-              I'm
-            </h2>
-            <div className="flex flex-col items-center">
-              <h3 className="text-[120px] md:text-[240px] font-black text-blue-600 leading-[0.75] tracking-tighter uppercase">
-                Software
-              </h3>
-              <h3 className="text-[120px] md:text-[240px] font-black text-blue-600 leading-[0.75] tracking-tighter uppercase">
-                Engineer
-              </h3>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Layer 2: Foto Anda */}
-        <motion.div
-          style={{ y: imageY, scale: imageScale }}
-          className="absolute bottom-0 w-full max-w-5xl z-10 flex justify-center items-end h-[90vh]"
-        >
-          <img
-            src="/images/foto.png"
-            alt="Profile"
-            className="h-full w-auto object-contain grayscale contrast-125 brightness-110 drop-shadow-2xl"
-          />
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="absolute bottom-16 bg-blue-600 text-white px-10 py-4 rounded-full font-bold uppercase tracking-widest shadow-[0_10px_30px_rgba(37,99,235,0.5)] z-20"
-          >
-            Let's Chat
-          </motion.button>
-        </motion.div>
-
-        {/* Layer 3: Teks Kecil Dekoratif */}
-        <div className="absolute inset-0 p-10 md:p-20 flex flex-col justify-between pointer-events-none z-20">
-          <div className="flex justify-between items-start pt-20">
-            <motion.div style={{ x: leftItemsX, opacity: cornerOpacity }} className="max-w-[200px]">
-              <div className="w-10 h-[2px] bg-black mb-4"></div>
-              <p className="text-[10px] font-bold uppercase leading-tight tracking-wider">
-                Specialized in react, <br /> typescript, and modern <br /> web architecture.
-              </p>
+      {/* --- GLOBAL STICKY LOGO "F" --- */}
+      <div className="fixed top-0 left-0 w-[120px] h-screen z-50 pointer-events-none">
+        <AnimatePresence>
+          {isNavVisible && (
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className={`absolute top-0 w-full flex justify-center pt-8 h-[120px] pointer-events-auto
+                            backdrop-blur-md transition-colors duration-300
+                            ${isDarkMode ? "bg-black/70 border-white border-r" : "bg-white/70 border-black border-r"}
+                        `}
+            >
+              <span className={`font-['Playfair_Display'] text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                F
+              </span>
             </motion.div>
-            <motion.div style={{ x: rightItemsX, opacity: cornerOpacity }} className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-widest">
-                Available for <br /> new opportunities 2026
-              </p>
-            </motion.div>
-          </div>
+          )}
+        </AnimatePresence>
+      </div>
 
-          <div className="flex justify-between items-end">
-            <motion.div style={{ x: leftItemsX, opacity: cornerOpacity }}>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-40">
-                Based in Lampung, ID
-              </p>
-            </motion.div>
-            <motion.div style={{ x: rightItemsX, opacity: cornerOpacity }} className="max-w-[220px] text-right">
-              <p className="text-[10px] font-medium leading-relaxed text-slate-400">
-                Building robust and scalable <br /> digital solutions for <br /> global clients.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* --- GLOBAL STICKY SOCIAL ICONS (FIXED COLOR) --- */}
+      {/* PERBAIKAN DI SINI:
+          Menambahkan logic class: ${isDarkMode ? "text-white" : "text-black"}
+          agar icon SVG (currentColor) mengikuti warna teks container.
+      */}
+      <div className={`fixed bottom-0 left-0 w-[120px] pb-16 z-50 flex flex-col items-center gap-8 pointer-events-none transition-colors duration-300
+            ${isDarkMode ? "text-white" : "text-black"}
+      `}>
+        <SocialLink href="https://www.instagram.com/faturarkansyy?igsh=MTk3bXRvdTQ4a3h5MQ==" Icon={IconInstagram} label="Instagram" />
+        <SocialLink href="https://github.com/faturarkansy" Icon={IconGithub} label="Github" />
+        <SocialLink href="https://www.linkedin.com/in/fatur-arkan-syawalva-339253255/" Icon={IconLinkedin} label="LinkedIn" />
+      </div>
 
-      {/* Section Hitam Berikutnya */}
-      <section className="relative w-screen min-h-screen bg-black overflow-hidden flex items-center justify-center">
-        {/* BACKGROUND AURORA */}
-        <Aurora
-          colorStops={['#3A1078', '#4E31AA', '#3795BD']} // Sesuaikan warna aurora Anda
-          amplitude={1.2}
-          speed={0.5}
-        />
 
-        {/* Konten di atas Aurora */}
-        <div className="relative z-10 text-center px-10">
-          <motion.h2
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="text-white text-6xl md:text-8xl font-black italic tracking-tighter uppercase"
-          >
-            Digital Experience
-          </motion.h2>
-          <p className="text-blue-300 mt-6 text-lg tracking-widest uppercase font-light">
-            Bringing code to life with fluid motion
-          </p>
-        </div>
-      </section>
+      {/* --- GLOBAL STICKY HEADER --- */}
+      <div className="fixed top-0 left-[120px] right-0 z-50 pointer-events-none">
+        <AnimatePresence>
+          {isNavVisible && (
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className={`h-[120px] flex items-center pr-8 pointer-events-auto transition-all duration-300
+                            backdrop-blur-md
+                            ${isDarkMode ? "bg-black/70" : "bg-white/70"}
+                        `}
+            >
+              {/* Navigation Menu */}
+              <div className={`flex-4 flex pl-16 items-center gap-10 text-xl font-medium font-['Poppins'] ${isDarkMode ? "text-white" : "text-black"}`}>
+                <a href="#" className="hover:text-blue-600 transition-colors">Welcome</a>
+                <a href="#" className="hover:text-blue-600 transition-colors">About</a>
+                <a href="#" className="hover:text-blue-600 transition-colors">Portfolio</a>
+                <a href="#" className="hover:text-blue-600 transition-colors">Experience</a>
+              </div>
+
+              {/* Toggle Button */}
+              <div className="flex-1 flex items-center justify-center p-2">
+                <button onClick={toggleTheme} className={`relative w-[140px] h-[50px] rounded-full border-2 flex items-center px-1 cursor-pointer transition-colors ${isDarkMode ? "border-white" : "border-black"}`}>
+                  <span className={`absolute w-full text-center font-bold text-lg pointer-events-none transition-all duration-300 ${isDarkMode ? "pl-8 opacity-100 text-white" : "opacity-0"}`}>Dark</span>
+                  <span className={`absolute w-full text-center font-bold text-lg pointer-events-none transition-all duration-300 ${!isDarkMode ? "pr-8 opacity-100 text-black" : "opacity-0"}`}>Light</span>
+                  <div className={`w-[40px] h-[40px] rounded-full border border-black bg-white shadow-md transform transition-transform duration-300 ease-in-out ${isDarkMode ? "translate-x-0" : "translate-x-[88px]"}`}></div>
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* --- SCROLLABLE CONTENT --- */}
+      <div className="w-full">
+        <Welcome_Section isDarkMode={isDarkMode} />
+        <Services_Section isDarkMode={isDarkMode} />
+        <TechStack_Section isDarkMode={isDarkMode} />
+        <Portfolio_Section isDarkMode={isDarkMode} />
+        <WorkExperience_Section isDarkMode={isDarkMode} />
+      </div>
+
     </div>
   );
-};
+}
 
 export default App;
