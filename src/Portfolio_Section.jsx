@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    SiReact, SiTypescript, SiTailwindcss, SiBootstrap, SiFramer,
-    SiExpress, SiPostgresql, SiMysql, SiSqlite, SiLaravel,
-    SiFlutter, SiElectron, SiGit, SiGithub, SiFirebase,
-    SiFigma, SiPython, SiPostman, SiNextdotjs, SiRedux
+    SiReact, SiFramer, SiTypescript, SiTailwindcss, SiExpress, SiMysql, SiFlutter, SiGithub, SiPostman, SiRedux
 } from "react-icons/si";
 import { HiOutlineExternalLink } from "react-icons/hi";
 
+const customBlackCursor = `url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 24 24' fill='black' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.5 3V19L8.5 15L11.5 21L14.5 19.5L11.5 13.5L17 13.5L4.5 3Z' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3, pointer`;
+
 const Portfolio_Section = ({ isDarkMode }) => {
+    // --- RESPONSIVE STATE ---
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const allProjects = [
         {
             id: 0,
@@ -27,29 +35,31 @@ const Portfolio_Section = ({ isDarkMode }) => {
         },
         {
             id: 1,
-            title: "Dikedo",
-            description: "Develop a website-based application that is integrated with a GPS device to track vehicle positions based on maps using Google Maps.",
+            title: "Dikedo Tracker App",
+            description: "Develop a website-based application that is integrated with a GPS device to track vehicle positions based on maps using Google Maps by Leaflet. The GPS device on the vehicle also has a camera that can be used live when the vehicle is turned on.",
             focus: ["Google Map", "Tracking", "Subscription"],
             image: "/images/dikedo_preview.png",
             tags: [
                 { name: "React.js", icon: SiReact, color: "#3178C6" },
+                { name: "MySQL", icon: SiMysql, color: "#06B6D4" },
+                { name: "Postman", icon: SiPostman, color: "#EF5B25" },
                 { name: "Express.js", icon: SiExpress, color: isDarkMode ? "#fff" : "#000" }
             ],
             link: "#",
-            github: "#"
+            github: "https://github.com/faturarkansy/Dikedo"
         },
         {
             id: 2,
-            title: "Freshmart Store",
-            description: "Modern grocery store web application with a clean and responsive UI. Built with efficient state management using Redux Toolkit for seamless shopping.",
-            focus: ["E-commerce", "State Management", "UI UX"],
+            title: "Fatur Arkan Personal Website",
+            description: "This is a platform where I introduce myself. I showcase my portfolio, work, and experience. Through this website, I centrally demonstrate my personal branding.",
+            focus: ["Comfortable UI", "Personal Branding", "Portfolio"],
             image: "/images/freshmart.jpg",
             tags: [
                 { name: "React", icon: SiReact, color: "#61DAFB" },
-                { name: "Redux", icon: SiRedux, color: "#764ABC" }
+                { name: "Framer Motion", icon: SiFramer, color: "#0055FF" },
             ],
             link: "#",
-            github: "#"
+            github: "https://github.com/faturarkansy/Personal-Website-React.js"
         },
         {
             id: 3,
@@ -80,137 +90,144 @@ const Portfolio_Section = ({ isDarkMode }) => {
     ];
 
     const [selectedId, setSelectedId] = useState(0);
-
-    // Perbaikan: Gunakan fallback array kosong [] jika activeProject tidak ditemukan
     const activeProject = allProjects.find(p => p.id === selectedId) || allProjects[0];
 
-    // Jika data masih belum siap, tampilkan loading sederhana (mencegah layar putih)
-    if (!activeProject) return <div className="h-screen bg-black" />;
+    const isMobile = windowWidth <= 430;
+    const isTabletRange = windowWidth <= 920 && windowWidth > 430;
+    const isBelow920 = windowWidth <= 920;
 
     return (
-        <div className={`w-full min-h-screen flex transition-colors duration-300 ease-in-out font-sans ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+        <div className={`w-full flex transition-colors duration-300 ease-in-out font-sans ${isDarkMode ? "bg-black text-white" : "bg-white text-black"} ${isBelow920 ? "h-auto" : "min-h-screen"}`}>
 
-            <div className={`w-[120px] border-r flex-shrink-0 min-h-screen ${isDarkMode ? "border-white" : "border-black"}`} />
+            {/* --- SIDEBAR SYNC (Sama dengan Services_Section) --- */}
+            {!isMobile && (
+                <div className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-[60px]" : "w-[90px]"}`} />
+            )}
 
-            <div className="flex-1 flex flex-col px-12 md:px-20 py-24 overflow-hidden max-w-[calc(100vw-120px)]">
+            {/* --- MAIN CONTENT area (Menerapkan mx-12 lg:mx-20 seperti Services_Section) --- */}
+            <div className={`flex-1 flex flex-col min-w-0 mx-12 lg:mx-20
+                ${windowWidth > 920 ? "pt-[90px]" : isTabletRange ? "pt-[30px]" : "pt-[10px]"} pb-20 overflow-hidden`}>
 
-                <motion.h2
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    className="text-5xl font-bold mb-12 font-['Poppins']"
-                >
-                    My <span className="text-[#4F75B0]">Portfolio</span>
-                </motion.h2>
+                <div className={`flex-1 flex flex-col ${isBelow920 ? "justify-start pt-10" : "justify-center"} max-w-7xl w-full`}>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start min-h-[450px]">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={`img-${activeProject.id}`}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.4 }}
-                            className="relative rounded-[2.5rem] overflow-hidden border border-gray-800/30 shadow-2xl bg-zinc-900"
-                        >
-                            <img src={activeProject.image} alt={activeProject.title} className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105" />
-                        </motion.div>
-                    </AnimatePresence>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className={`text-3xl lg:text-4xl font-bold mb-10 font-['Poppins'] ${isBelow920 ? "text-center lg:text-left" : ""}`}
+                    >
+                        My <span className="text-[#4F75B0]">Portfolio</span>
+                    </motion.h2>
 
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={`text-${activeProject.id}`}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.4 }}
-                            className="flex flex-col gap-6"
-                        >
-                            <div className="flex flex-wrap justify-between items-start gap-4">
-                                <h3 className="text-4xl font-bold font-['Poppins'] leading-tight flex-1">{activeProject.title}</h3>
-                                <div className="flex gap-2">
-                                    {/* Pengamanan: Gunakan optional chaining ?. */}
-                                    {activeProject.tags?.map((tag, idx) => (
-                                        <div key={idx} className={`p-2 rounded-xl border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}>
-                                            {tag.icon && <tag.icon style={{ color: tag.color }} size={20} />}
-                                        </div>
+                    {/* Main Content Area */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start mb-8">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`img-${activeProject.id}`}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.4 }}
+                                className="relative rounded-3xl overflow-hidden border border-gray-800/20 shadow-xl bg-zinc-900 aspect-video lg:aspect-square xl:aspect-video flex items-center justify-center"
+                            >
+                                <img src={activeProject.image} alt={activeProject.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                            </motion.div>
+                        </AnimatePresence>
+
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`text-${activeProject.id}`}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.4 }}
+                                className="flex flex-col gap-4"
+                            >
+                                <div className="flex flex-wrap justify-between items-start gap-3">
+                                    <h3 className="text-2xl font-bold font-['Poppins'] leading-tight flex-1">{activeProject.title}</h3>
+                                    <div className="flex gap-1">
+                                        {/* Pengamanan: Gunakan optional chaining ?. */}
+                                        {activeProject.tags?.map((tag, idx) => (
+                                            <div key={idx} className={`p-1.5 rounded-lg border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}>
+                                                {tag.icon && <tag.icon style={{ color: tag.color }} size={20} />}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <p className="text-sm lg:text-base opacity-75 leading-relaxed max-w-xl">{activeProject.description}</p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {activeProject.focus?.map((item, index) => (
+                                        <span key={index} className={`px-4 py-1 rounded-full font-medium border text-xs ${isDarkMode ? "bg-white text-black" : "bg-black text-white"}`}>
+                                            {item}
+                                        </span>
                                     ))}
                                 </div>
-                            </div>
-                            <p className="text-lg opacity-70 leading-relaxed max-w-xl">{activeProject.description}</p>
 
-                            {/* RENDER FOCUS POINTS */}
-                            <div className="flex flex-wrap gap-3">
-                                {activeProject.focus?.map((item, index) => (
-                                    <span
-                                        key={index}
-                                        className={`px-5 py-2 rounded-full font-medium transition-all duration-300 border text-sm
-                                            ${isDarkMode
-                                                ? "bg-white text-black border-white"
-                                                : "bg-black text-white border-black"}`}
+                                <div className="flex gap-6 mt-2">
+                                    <a href={activeProject.link} className="flex items-center gap-2 text-lg font-bold hover:text-[#4F75B0] transition-all group">
+                                        <HiOutlineExternalLink className="group-hover:scale-110 transition-transform" /> Visit
+                                    </a>
+                                    <a href={activeProject.github} className="flex items-center gap-2 text-lg font-bold hover:text-[#4F75B0] transition-all group">
+                                        <SiGithub className="group-hover:scale-110 transition-transform" /> Source
+                                    </a>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Sub-projects Carousel */}
+                    <div className="w-full">
+                        <h3 className="text-lg font-bold font-['Poppins'] opacity-70 mb-2 tracking-tight">EXPLORE MORE</h3>
+                        <div className="flex gap-4 overflow-x-auto pb-6 pt-2 custom-scrollbar scroll-smooth no-scrollbar">
+                            {allProjects
+                                .filter(project => project.id !== selectedId)
+                                .map((project) => (
+                                    <motion.div
+                                        key={project.id}
+                                        whileHover={{ y: -8 }}
+                                        onClick={() => setSelectedId(project.id)}
+                                        style={{ cursor: customBlackCursor }}
+                                        className={`flex-shrink-0 w-[240px] md:w-[280px] rounded-2xl overflow-hidden border transition-all group ${isDarkMode ? "bg-[#0A0A0A] border-white/5" : "bg-white border-black/5 shadow-sm"}`}
                                     >
-                                        {item}
-                                    </span>
-                                ))}
-                            </div>
+                                        <div className="h-36 overflow-hidden bg-zinc-900">
+                                            <img src={project.image} alt={project.title} className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+                                        </div>
+                                        <div className="p-4 flex flex-col gap-2">
+                                            {/* HEADER KARTU: Judul dan Ikon diatur berjajar */}
+                                            <div className="flex items-center justify-between gap-2">
+                                                <h4 className="font-bold text-xs truncate font-['Poppins'] flex-1">
+                                                    {project.title}
+                                                </h4>
+                                                <div className="flex gap-1 flex-shrink-0">
+                                                    {project.tags?.map((tag, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className={`p-1 rounded-md border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
+                                                        >
+                                                            {tag.icon && <tag.icon style={{ color: tag.color }} size={12} />}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
 
-                            <div className="flex gap-6 mt-2">
-                                <a href={activeProject.link} className="flex items-center gap-2 text-xl font-bold hover:text-[#4F75B0] transition-all group">
-                                    <HiOutlineExternalLink className="group-hover:scale-110 transition-transform" /> Visit
-                                </a>
-                                <a href={activeProject.github} className="flex items-center gap-2 text-xl font-bold hover:text-[#4F75B0] transition-all group">
-                                    <SiGithub className="group-hover:scale-110 transition-transform" /> Source
-                                </a>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-
-                <div className="w-full">
-                    <h3 className="text-2xl font-bold font-['Poppins'] opacity-80">Looking for the next project</h3>
-                    <div className="flex gap-6 pt-6 overflow-x-auto pb-10 custom-scrollbar scroll-smooth">
-                        {allProjects
-                            .filter(project => project.id !== selectedId)
-                            .map((project) => (
-                                <motion.div
-                                    key={project.id}
-                                    layout
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    whileHover={{ y: -10 }}
-                                    onClick={() => setSelectedId(project.id)}
-                                    className={`flex-shrink-0 w-[340px] rounded-[2rem] overflow-hidden border transition-all cursor-pointer group ${isDarkMode ? "bg-[#0c0c0c] border-zinc-800 shadow-2xl" : "bg-gray-50 border-gray-200 shadow-lg"}`}
-                                >
-                                    <div className="h-44 overflow-hidden bg-zinc-900">
-                                        <img src={project.image} alt={project.title} className="w-full h-full object-cover opacity-80 transition-all group-hover:opacity-100 group-hover:scale-110" />
-                                    </div>
-                                    <div className="p-6 flex flex-col gap-3">
-                                        <div className="flex justify-between items-center">
-                                            <h4 className="font-bold text-lg truncate font-['Poppins']">{project.title}</h4>
-                                            <div className="flex gap-1">
-                                                {project.tags?.map((tag, idx) => (
-                                                    tag.icon && <tag.icon key={idx} className="text-zinc-500" size={14} />
-                                                ))}
+                                            <p className="text-[10px] line-clamp-1 opacity-50">{project.description}</p>
+                                            <div className="text-[#4F75B0] text-[10px] font-black mt-1 flex items-center gap-1">
+                                                View Details <span className="group-hover:translate-x-1 transition-transform">→</span>
                                             </div>
                                         </div>
-                                        <p className="text-sm line-clamp-2 opacity-50">{project.description}</p>
-                                        <div className="text-[#4F75B0] text-xs font-bold mt-2 flex items-center gap-1 group-hover:gap-2 transition-all">
-                                            View Project <span>→</span>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                ))}
+                        </div>
                     </div>
                 </div>
             </div>
 
             <style>{`
-                .custom-scrollbar::-webkit-scrollbar { height: 6px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { 
-                    background: ${isDarkMode ? '#333' : '#ddd'}; 
-                    border-radius: 10px; 
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4F75B0; }
+                .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}; border-radius: 10px; }
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
         </div>
     );
