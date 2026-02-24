@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    SiReact, SiFramer, SiTypescript, SiTailwindcss, SiExpress, SiMysql, SiFlutter, SiGithub, SiPostman, SiRedux
+    SiReact, SiFramer, SiBootstrap, SiTypescript, SiElectron, SiSqlite, SiTailwindcss, SiExpress, SiMysql, SiFlutter, SiGithub, SiPostman, SiRedux
 } from "react-icons/si";
 import { HiOutlineExternalLink } from "react-icons/hi";
 
@@ -35,12 +35,70 @@ const Portfolio_Section = ({ isDarkMode }) => {
         },
         {
             id: 1,
-            title: "Dikedo Tracker App",
+            title: "Ariftama Tekindo E-Commerce Admin Web App",
+            description: "Building a digital platform that supports the sale of Ariftama Tekindo company products by implementing the payment gateway from Midtrans along with the provision of monitored and documented services.",
+            focus: ["Product", "Services", "Payment Gateway"],
+            image: "/images/ariftama_tekindo_admin_preview.png",
+            tags: [
+                { name: "Flutter", icon: SiFlutter, color: "#3178C6" },
+                { name: "MySQL", icon: SiMysql, color: "#06B6D4" },
+                { name: "Postman", icon: SiPostman, color: "#EF5B25" },
+                { name: "Express", icon: SiExpress, color: isDarkMode ? "#fff" : "#000" }
+            ],
+            link: "https://dashboard-ariftama-tekindo.vercel.app/",
+            github: "https://github.com/faturarkansy/Dashboard-Ariftama-Tekindo"
+        },
+        {
+            id: 2,
+            title: "Fatur Arkan Personal Website",
+            description: "This is a platform where I introduce myself. I showcase my portfolio, work, and experience. Through this website, I centrally demonstrate my personal branding.",
+            focus: ["Comfortable UI", "Personal Branding", "Portfolio"],
+            image: "/images/fatur's_personal_website.png",
+            tags: [
+                { name: "React", icon: SiReact, color: "#61DAFB" },
+                { name: "Tailwind", icon: SiTailwindcss, color: "#06B6D4" },
+                { name: "Framer Motion", icon: SiFramer, color: "#0055FF" },
+            ],
+            link: "#",
+            github: "https://github.com/faturarkansy/Personal-Website-React.js"
+        },
+        {
+            id: 3,
+            title: "Wireless Electrocardiogram Dekstop App",
+            description: "Building a digital platform that supports the sale of Ariftama Tekindo company products by implementing the payment gateway from Midtrans along with the provision of monitored and documented services.",
+            focus: ["Product", "Services", "Payment Gateway"],
+            image: "/images/wireless_electrocardiogram_preview.png",
+            tags: [
+                { name: "Electron", icon: SiElectron, color: "#47848F" },
+                { name: "SQLite", icon: SiSqlite, color: "#003B57" },
+                { name: "Bootstrap", icon: SiBootstrap, color: "#7952B3" },
+            ],
+            link: "https://drive.google.com/file/d/1sh7ANxcZRq7j4nWb85Ke2u2LPSkLE7rf/view?usp=sharing",
+            github: "https://github.com/faturarkansy/Ariftama-Tekindo"
+        },
+        {
+            id: 8,
+            title: "Agent MUI LPPOM Web App",
+            description: "A sleek and modern Nike website redesign showcasing fully responsive design with smooth animations and high-performance image rendering.",
+            focus: ["Halal Certification", "Agent"],
+            image: "/images/agent_mui_lppom_preview.png",
+            tags: [
+                { name: "React", icon: SiReact, color: "#61DAFB" },
+                { name: "Tailwind", icon: SiTailwindcss, color: "#06B6D4" },
+                { name: "Postman", icon: SiPostman, color: "#FF6C37" },
+
+            ],
+            link: "https://agent.mui.invix.id/",
+            github: "https://github.com/faturarkansy/MUI---LPPOM"
+        },
+        {
+            id: 9,
+            title: "Dikedo Tracker Web App",
             description: "Develop a website-based application that is integrated with a GPS device to track vehicle positions based on maps using Google Maps by Leaflet. The GPS device on the vehicle also has a camera that can be used live when the vehicle is turned on.",
             focus: ["Google Map", "Tracking", "Subscription"],
             image: "/images/dikedo_preview.png",
             tags: [
-                { name: "React.js", icon: SiReact, color: "#3178C6" },
+                { name: "React.js", icon: SiReact, color: "#61DAFB" },
                 { name: "MySQL", icon: SiMysql, color: "#06B6D4" },
                 { name: "Postman", icon: SiPostman, color: "#EF5B25" },
                 { name: "Express.js", icon: SiExpress, color: isDarkMode ? "#fff" : "#000" }
@@ -49,40 +107,13 @@ const Portfolio_Section = ({ isDarkMode }) => {
             github: "https://github.com/faturarkansy/Dikedo"
         },
         {
-            id: 2,
-            title: "Fatur Arkan Personal Website",
-            description: "This is a platform where I introduce myself. I showcase my portfolio, work, and experience. Through this website, I centrally demonstrate my personal branding.",
-            focus: ["Comfortable UI", "Personal Branding", "Portfolio"],
-            image: "/images/freshmart.jpg",
-            tags: [
-                { name: "React", icon: SiReact, color: "#61DAFB" },
-                { name: "Framer Motion", icon: SiFramer, color: "#0055FF" },
-            ],
-            link: "#",
-            github: "https://github.com/faturarkansy/Personal-Website-React.js"
-        },
-        {
-            id: 3,
-            title: "Nike Reimagined",
-            description: "A sleek and modern Nike website redesign showcasing fully responsive design with smooth animations and high-performance image rendering.",
-            focus: ["UI UX Design", "High-Fidelity Animation"],
-            image: "/images/nike.jpg",
-            tags: [
-                { name: "Tailwind", icon: SiTailwindcss, color: "#06B6D4" },
-                { name: "React", icon: SiReact, color: "#61DAFB" }
-            ],
-            link: "#",
-            github: "#"
-        },
-        {
-            id: 4,
-            title: "News Hub",
+            id: 10,
+            title: "Slayan Mobile App",
             description: "Real-time news application integrating News API to deliver headlines across various categories with a focus on clean typography and readability.",
             focus: ["Real-time API", "Integration", "News Feed"],
-            image: "/images/newshub.jpg",
+            image: "/images/slayan_preview.png",
             tags: [
-                { name: "TS", icon: SiTypescript, color: "#3178C6" },
-                { name: "React", icon: SiReact, color: "#61DAFB" }
+                { name: "Flutter", icon: SiFlutter, color: "#3178C6" },
             ],
             link: "#",
             github: "#"
