@@ -43,23 +43,23 @@ const Footer_Section = ({ isDarkMode = false }) => {
           isDarkMode ? "bg-white text-black" : "bg-black text-white"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-12 pb-8">
+        <div className="max-w-5xl mx-auto px-5 sm:px-10 py-10 sm:py-12">
           {/* Newsletter / Stay Updated */}
           <div className="flex flex-col items-center text-center">
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight font-['Poppins']">
+            <h3 className="text-lg sm:text-2xl font-bold tracking-tight font-['Poppins']">
               Stay <span className="text-[#4F75B0]">Up</span>dated
             </h3>
             <p
-              className={`text-xs sm:text-sm mt-1.5 ${
+              className={`text-xs sm:text-sm mt-1.5 max-w-md leading-relaxed ${
                 isDarkMode ? "text-zinc-600" : "text-zinc-400"
               }`}
             >
-              Get new posts delivered to your inbox.
+              Feel free to reach out — I usually get back within 1–2 days
             </p>
 
             <form
               onSubmit={handleSubscribe}
-              className="mt-5 w-full max-w-lg flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5"
+              className="mt-5 w-full max-w-[270px] sm:max-w-lg mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5"
             >
               <input
                 type="email"
@@ -70,23 +70,23 @@ const Footer_Section = ({ isDarkMode = false }) => {
                 }}
                 placeholder="your@email.com"
                 aria-label="Email address"
-                className={`flex-1 h-11 px-4 rounded-lg border text-sm outline-none transition-colors ${
+                className={`w-full sm:flex-1 h-[44px] min-h-[44px] max-h-[44px] px-3.5 sm:px-4 rounded-xl border box-border text-xs sm:text-sm leading-none outline-none transition-colors ${
                   isDarkMode
-                    ? "bg-white border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500"
-                    : "bg-zinc-950 border-white/50 text-white placeholder:text-white/50 focus:border-white/50"
+                    ? "bg-zinc-50 border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-[#4F75B0]"
+                    : "bg-zinc-900/90 border-white/15 text-white placeholder:text-zinc-500 focus:border-[#4F75B0]"
                 }`}
               />
 
               <button
                 type="submit"
-                className={`h-11 px-5 rounded-lg text-sm font-semibold inline-flex items-center justify-center gap-2 transition-opacity hover:opacity-90 cursor-pointer ${
+                className={`w-full sm:w-auto h-[44px] min-h-[44px] max-h-[44px] px-4 sm:px-5 rounded-xl border border-transparent box-border text-xs sm:text-sm leading-none font-semibold inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.99] cursor-pointer ${
                   isDarkMode
                     ? "bg-[#111111] text-white"
                     : "bg-white text-zinc-950"
                 }`}
               >
-                <Mail className="w-4 h-4" />
-                <span>Subscribe</span>
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <span>Send</span>
               </button>
             </form>
 
@@ -103,18 +103,20 @@ const Footer_Section = ({ isDarkMode = false }) => {
 
           {/* Divider */}
           <hr
-            className={`my-10 border-t ${
-              isDarkMode ? "border-gray-500" : "border-white/90"
+            className={`my-7 sm:my-9 border-t ${
+              isDarkMode ? "border-black/15" : "border-white/15"
             }`}
           />
 
           {/* Bottom Bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm">
             {/* Brand Monogram & Name */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <div
-                className={`w-9 h-9 rounded-md border flex items-center justify-center p-0.5 overflow-hidden select-none ${
-                  isDarkMode ? "border-black" : "border-white"
+                className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg border flex items-center justify-center p-1 overflow-hidden select-none flex-shrink-0 ${
+                  isDarkMode
+                    ? "border-black/20 bg-zinc-100"
+                    : "border-white/20 bg-zinc-900"
                 }`}
               >
                 <img
@@ -123,14 +125,14 @@ const Footer_Section = ({ isDarkMode = false }) => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="font-bold font-['Poppins'] tracking-tight">
+              <span className="font-bold font-['Poppins'] tracking-tight text-xs sm:text-sm">
                 Fatur Arkan Syawalva
               </span>
             </div>
 
-            {/* Copyright at Bottom Right */}
+            {/* Copyright */}
             <p
-              className={`text-sm text-center sm:text-right ${
+              className={`text-[11px] sm:text-xs text-center sm:text-right leading-relaxed ${
                 isDarkMode ? "text-zinc-600" : "text-zinc-400"
               }`}
             >

@@ -30,6 +30,33 @@ const Welcome_Section = ({ isDarkMode }) => {
   const isTabletRange = windowWidth < 920 && windowWidth > 430;
   const isBelow920 = windowWidth <= 920;
 
+  const renderExperienceBadge = () => (
+    <div className="inline-flex items-center gap-3.5 select-none">
+      <span
+        className={`font-['Poppins'] font-bold tracking-tight leading-none ${
+          isMidRange || isMobile
+            ? "text-xl sm:text-2xl"
+            : "text-2xl lg:text-3xl"
+        }`}
+      >
+        2+
+      </span>
+      <span
+        className={`h-6 w-[1.5px] ${
+          isDarkMode ? "bg-white/25" : "bg-black/25"
+        }`}
+        aria-hidden="true"
+      />
+      <span
+        className={`font-['Poppins'] text-[11px] lg:text-xs font-semibold uppercase tracking-[0.22em] leading-none ${
+          isDarkMode ? "text-zinc-400" : "text-zinc-600"
+        }`}
+      >
+        YEARS EXPERIENCE
+      </span>
+    </div>
+  );
+
   return (
     /* MODIFIKASI 1: Hilangkan min-h-screen jika di bawah 920px agar konten tidak dipaksa ke tengah layar */
     <div
@@ -114,6 +141,11 @@ const Welcome_Section = ({ isDarkMode }) => {
                   </AnimatePresence>
                 </motion.div>
               </div>
+
+              {/* Experience Badge di Desktop (di bawah teks "I do") */}
+              {!isMobile && (
+                <div className="mt-6">{renderExperienceBadge()}</div>
+              )}
             </div>
 
             {/* Image Area */}
@@ -136,56 +168,75 @@ const Welcome_Section = ({ isDarkMode }) => {
 
         {/* --- FOOTER --- */}
         <div
-          className={`flex flex-wrap items-center mb-4 gap-y-4 gap-x-2 py-8 border-t border-transparent ${isMobile ? "justify-center text-center px-0" : "px-6 lg:px-10"}`}
+          className={`flex flex-col mb-4 py-8 border-t border-transparent ${
+            isMobile ? "items-center text-center px-0 gap-5" : "px-6 lg:px-10"
+          }`}
         >
-          <div className="flex flex-col">
-            <span className="font-['Poppins'] text-sm lg:text-lg  font-bold">
-              Email
-            </span>
-            <a
-              href="mailto:faturarkansyawalva@gmail.com"
-              className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
-            >
-              faturarkansyawalva@gmail.com
-            </a>
-          </div>
+          {/* Experience Badge di Mobile (di atas Email, Phone, Location) */}
+          {isMobile && <div>{renderExperienceBadge()}</div>}
 
-          {windowWidth >= 490 && (
+          <div
+            className={`flex flex-wrap items-center gap-y-4 gap-x-2 ${
+              isMobile ? "justify-center" : "justify-start"
+            }`}
+          >
             <div
-              className={`h-8 w-[1px] mx-4 ${isDarkMode ? "bg-white/30" : "bg-black/20"}`}
-            ></div>
-          )}
-
-          <div className="flex flex-col">
-            <span className="font-['Poppins'] text-sm lg:text-lg font-bold">
-              Phone
-            </span>
-            <a
-              href="https://wa.me/6281947897059"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
+              className={`flex flex-col ${
+                isMobile ? "order-last w-full" : "order-none"
+              }`}
             >
-              +62 819-4789-7059
-            </a>
-          </div>
+              <span className="font-['Poppins'] text-sm lg:text-lg font-bold">
+                Email
+              </span>
+              <a
+                href="mailto:faturarkansyawalva@gmail.com"
+                className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
+              >
+                faturarkansyawalva@gmail.com
+              </a>
+            </div>
 
-          {windowWidth >= 490 && (
+            {windowWidth >= 490 && (
+              <div
+                className={`h-8 w-[1px] mx-4 ${isDarkMode ? "bg-white/30" : "bg-black/20"}`}
+              ></div>
+            )}
+
             <div
-              className={`h-8 w-[1px] mx-4 ${isDarkMode ? "bg-white/30" : "bg-black/20"}`}
-            ></div>
-          )}
-
-          <div className="flex flex-col">
-            <span className="font-['Poppins'] text-sm lg:text-lg font-bold">
-              Location
-            </span>
-            <a
-              href="#"
-              className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
+              className={`flex flex-col ${isMobile ? "order-1" : "order-none"}`}
             >
-              Jakarta, ID
-            </a>
+              <span className="font-['Poppins'] text-sm lg:text-lg font-bold">
+                Phone
+              </span>
+              <a
+                href="https://wa.me/6281947897059"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
+              >
+                +62 819-4789-7059
+              </a>
+            </div>
+
+            {windowWidth >= 490 && (
+              <div
+                className={`h-8 w-[1px] mx-4 ${isDarkMode ? "bg-white/30" : "bg-black/20"}`}
+              ></div>
+            )}
+
+            <div
+              className={`flex flex-col ${isMobile ? "order-2" : "order-none"}`}
+            >
+              <span className="font-['Poppins'] text-sm lg:text-lg font-bold">
+                Location
+              </span>
+              <a
+                href="#"
+                className="text-xs lg:text-sm mt-0.5 hover:text-[#4F75B0] hover:underline transition-all"
+              >
+                Jakarta, ID
+              </a>
+            </div>
           </div>
         </div>
       </div>

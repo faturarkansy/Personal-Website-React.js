@@ -410,7 +410,10 @@ function ExperienceListView({
   }, [orderedExperiences.length, expandedId, isMobile]);
 
   return (
-    <div ref={listWrapperRef} className="relative h-auto px-4 sm:px-8 py-6">
+    <div
+      ref={listWrapperRef}
+      className="relative h-auto px-0 sm:px-8 py-4 sm:py-6"
+    >
       <div className="relative max-w-4xl mx-auto">
         {/* Garis Vertikal Penghubung: Hanya dari tengah kartu pertama (atas) ke tengah kartu terakhir (bawah) */}
         {lineMetrics.height > 0 && (
@@ -721,19 +724,11 @@ const WorkExperience_Section = ({ isDarkMode }) => {
         />
       )}
 
-      <div
-        className={`flex-1 flex flex-col min-w-0 px-10 lg:px-16 py-16 ${
-          windowWidth > 920
-            ? "pt-[90px]"
-            : windowWidth <= 920 && windowWidth > 430
-              ? "pt-[30px]"
-              : "pt-[10px]"
-        }`}
-      >
+      <div className="flex-1 flex flex-col min-w-0 px-6 sm:px-10 lg:px-16 py-24 mb-8">
         <div
           className={`flex mb-8 ${
             isMobile
-              ? "flex-col items-start gap-4"
+              ? "flex-col items-center text-center gap-4"
               : "flex-row justify-between items-end gap-4"
           } ${isBelow920 ? "pt-10" : ""}`}
         >
@@ -742,14 +737,14 @@ const WorkExperience_Section = ({ isDarkMode }) => {
             whileInView={{ opacity: 1, y: 0 }}
             className={`font-bold font-['Poppins'] ${
               isMidRange || isMobile ? "text-3xl" : "text-4xl"
-            }`}
+            } ${isMobile ? "text-center" : ""}`}
           >
             Work <span className="text-[#4F75B0]">& Experience</span>
           </motion.h2>
 
           <div
-            className={`flex flex-wrap p-1 rounded-lg border ${
-              isMobile ? "w-fit" : ""
+            className={`flex flex-wrap justify-center p-1 rounded-lg border ${
+              isMobile ? "w-fit mx-auto" : ""
             } ${
               isDarkMode
                 ? "bg-zinc-900 border-zinc-800"
@@ -894,14 +889,14 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                           />
                         </div>
                         <div className="flex flex-col">
-                          <h4 className="font-bold text-sm leading-tight">
+                          <h3 className="font-bold text-sm leading-snug font-['Poppins']">
                             {exp.company}
-                          </h4>
-                          <p className="text-xs font-semibold text-[#4F75B0] mt-0.5">
+                          </h3>
+                          <p className="text-xs font-semibold text-[#4F75B0]">
                             {exp.title}
                           </p>
-                          <div className="inline-flex items-center gap-1 text-[11px] opacity-65 mt-1">
-                            <Calendar className="w-3 h-3" />
+                          <div className="inline-flex items-center gap-1.5 text-[11px] opacity-65 mt-1">
+                            <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
                             <span>
                               {exp.startDate} - {formatFinishDate(exp.date)}
                             </span>
