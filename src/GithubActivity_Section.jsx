@@ -430,14 +430,14 @@ export default function GithubActivity_Section({ isDarkMode }) {
                     isDarkMode={isDarkMode}
                   />
                   <StatCard
-                    label="Commits (12M)"
+                    label="Commits"
                     value={state.data.commits}
                     icon={GitCommitHorizontal}
                     delay={0.05}
                     isDarkMode={isDarkMode}
                   />
                   <StatCard
-                    label="Active Days (12M)"
+                    label="Pushes"
                     value={state.data.pushes}
                     icon={ArrowUpFromLine}
                     delay={0.1}
