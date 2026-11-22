@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    SiReact, SiFramer, SiBootstrap, SiTypescript, SiElectron, SiSqlite, SiTailwindcss, SiExpress, SiMysql, SiFlutter, SiGithub, SiPostman, SiRedux
+    SiReact, SiCodeigniter, SiFramer, SiBootstrap, SiTypescript, SiElectron, SiSqlite, SiTailwindcss, SiExpress, SiMysql, SiFlutter, SiGithub, SiPostman, SiRedux
 } from "react-icons/si";
 import { HiOutlineExternalLink } from "react-icons/hi";
 
@@ -35,8 +35,8 @@ const Portfolio_Section = ({ isDarkMode }) => {
         },
         {
             id: 1,
-            title: "Ariftama Tekindo E-Commerce Admin Web App",
-            description: "Building a digital platform that supports the sale of Ariftama Tekindo company products by implementing the payment gateway from Midtrans along with the provision of monitored and documented services.",
+            title: "Ariftama Tekindo Dashboard E-Commerce Web App",
+            description: "A comprehensive web-based administration dashboard as the central management hub for the Ariftama Tekindo e-commerce ecosystem. The system is designed to synchronize seamlessly with the Android mobile application, providing real-time data visualization and operational control to ensure business efficiency.",
             focus: ["Product", "Services", "Payment Gateway"],
             image: "/images/ariftama_tekindo_admin_preview.png",
             tags: [
@@ -71,6 +71,20 @@ const Portfolio_Section = ({ isDarkMode }) => {
             tags: [
                 { name: "Electron", icon: SiElectron, color: "#47848F" },
                 { name: "SQLite", icon: SiSqlite, color: "#003B57" },
+                { name: "Bootstrap", icon: SiBootstrap, color: "#7952B3" },
+            ],
+            link: "https://drive.google.com/file/d/1sh7ANxcZRq7j4nWb85Ke2u2LPSkLE7rf/view?usp=sharing",
+            github: "https://github.com/faturarkansy/Ariftama-Tekindo"
+        },
+        {
+            id: 4,
+            title: "Portal Potensi Lampung Selatan Web App",
+            description: "Building a digital platform that supports the sale of Ariftama Tekindo company products by implementing the payment gateway from Midtrans along with the provision of monitored and documented services.",
+            focus: ["Product", "Services", "Payment Gateway"],
+            image: "/images/portal_potensi_lamsel_preview.png",
+            tags: [
+                { name: "Code Igniter", icon: SiCodeigniter, color: "#FFCA28" },
+                { name: "MySQL", icon: SiMysql, color: "#06B6D4" },
                 { name: "Bootstrap", icon: SiBootstrap, color: "#7952B3" },
             ],
             link: "https://drive.google.com/file/d/1sh7ANxcZRq7j4nWb85Ke2u2LPSkLE7rf/view?usp=sharing",
