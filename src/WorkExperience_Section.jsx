@@ -479,7 +479,11 @@ const WorkExperience_Section = ({ isDarkMode }) => {
         } mb-24`}
       >
         <div
-          className={`flex justify-between items-end mb-8 ${isBelow920 ? "pt-10" : ""}`}
+          className={`flex mb-8 ${
+            isMobile
+              ? "flex-col items-start gap-4"
+              : "flex-row justify-between items-end gap-4"
+          } ${isBelow920 ? "pt-10" : ""}`}
         >
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -490,13 +494,19 @@ const WorkExperience_Section = ({ isDarkMode }) => {
           </motion.h2>
 
           <div
-            className={`flex p-1 rounded-lg border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
+            className={`flex p-1 rounded-lg border ${
+              isMobile ? "w-fit" : ""
+            } ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
           >
             {["timeline", "list"].map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all capitalize ${viewMode === mode ? "bg-[#4F75B0] text-white shadow-md" : "text-gray-500 hover:text-gray-700"}`}
+                className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all capitalize ${
+                  viewMode === mode
+                    ? "bg-[#4F75B0] text-white shadow-md"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
               >
                 {mode}
               </button>
