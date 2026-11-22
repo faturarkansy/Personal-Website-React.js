@@ -310,16 +310,33 @@ function App() {
   const isTablet = windowWidth < 920;
   const isMobile = windowWidth < 430;
 
-  // Warna biru soft ambient (#4F75B0 = rgb(79, 117, 176)) yang lebih tebal
+  // Warna biru soft ambient (#4F75B0 = rgb(79, 117, 176)) untuk Dark Mode
   const ambientPalette = {
-    strong: isDarkMode
-      ? "rgba(79, 117, 176, 0.68)"
-      : "rgba(79, 117, 176, 0.50)",
-    medium: isDarkMode
-      ? "rgba(79, 117, 176, 0.56)"
-      : "rgba(79, 117, 176, 0.40)",
-    soft: isDarkMode ? "rgba(79, 117, 176, 0.46)" : "rgba(79, 117, 176, 0.32)",
+    strong: "rgba(79, 117, 176, 0.68)",
+    medium: "rgba(79, 117, 176, 0.56)",
+    soft: "rgba(79, 117, 176, 0.46)",
   };
+
+  const renderThemeSwitch = () => (
+    <button
+      onClick={toggleTheme}
+      className={`relative w-[113px] h-[40px] rounded-full border-2 flex p-1 items-center cursor-pointer transition-colors ${isDarkMode ? "border-white text-white" : "border-black text-black"}`}
+    >
+      <span
+        className={`absolute w-full text-center pb-0.5 font-bold text-sm transition-all duration-300 ${isDarkMode ? "pl-8 opacity-100" : "opacity-0"}`}
+      >
+        Dark
+      </span>
+      <span
+        className={`absolute w-full text-center pb-0.5 font-bold text-sm transition-all duration-300 ${!isDarkMode ? "pr-8 opacity-100" : "opacity-0"}`}
+      >
+        Light
+      </span>
+      <div
+        className={`w-[32px] h-[32px] rounded-full shadow-md transform transition-transform duration-300 ${isDarkMode ? "translate-x-0 bg-white" : "translate-x-[70px] bg-black"}`}
+      ></div>
+    </button>
+  );
 
   return (
     <div
@@ -458,24 +475,7 @@ function App() {
                 <p className="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">
                   Switch Theme
                 </p>
-                <button
-                  onClick={toggleTheme}
-                  className={`relative w-full h-[50px] rounded-xl border-2 flex p-1 items-center cursor-pointer transition-colors ${isDarkMode ? "border-white" : "border-black"}`}
-                >
-                  <span
-                    className={`absolute w-full text-center font-bold text-xs transition-all duration-300 ${isDarkMode ? "pl-8 opacity-100" : "opacity-0"}`}
-                  >
-                    DARK MODE
-                  </span>
-                  <span
-                    className={`absolute w-full text-center font-bold text-xs transition-all duration-300 ${!isDarkMode ? "pr-8 opacity-100" : "opacity-0"}`}
-                  >
-                    LIGHT MODE
-                  </span>
-                  <div
-                    className={`w-[38px] h-[38px] rounded-lg shadow-md transform transition-transform duration-300 ${isDarkMode ? "translate-x-0 bg-white" : "translate-x-[212px] bg-black"}`}
-                  ></div>
-                </button>
+                {renderThemeSwitch()}
               </div>
             </motion.div>
           </>
@@ -521,24 +521,7 @@ function App() {
                 </div>
 
                 <div className="flex-1 flex items-center justify-center">
-                  <button
-                    onClick={toggleTheme}
-                    className={`relative w-[113px] h-[40px] rounded-full border-2 flex p-1 items-center cursor-pointer transition-colors ${isDarkMode ? "border-white text-white" : "border-black text-black"}`}
-                  >
-                    <span
-                      className={`absolute w-full text-center pb-0.5 font-bold text-sm transition-all duration-300 ${isDarkMode ? "pl-8 opacity-100" : "opacity-0"}`}
-                    >
-                      Dark
-                    </span>
-                    <span
-                      className={`absolute w-full text-center pb-0.5 font-bold text-sm transition-all duration-300 ${!isDarkMode ? "pr-8 opacity-100" : "opacity-0"}`}
-                    >
-                      Light
-                    </span>
-                    <div
-                      className={`w-[32px] h-[32px] rounded-full shadow-md transform transition-transform duration-300 ${isDarkMode ? "translate-x-0 bg-white" : "translate-x-[70px] bg-black"}`}
-                    ></div>
-                  </button>
+                  {renderThemeSwitch()}
                 </div>
               </motion.div>
             )}
@@ -558,35 +541,36 @@ function App() {
               : "pt-[0px]"
         }`}
       >
-        {/* Soft Ambient Blue Glows (#4F75B0) — ukuran mobile diperkecil, desktop dipertahankan */}
-        {AMBIENT_BLOBS.map((blob, index) => (
-          <motion.div
-            key={index}
-            aria-hidden="true"
-            animate={{
-              x: blob.x,
-              y: blob.y,
-              scale: blob.scale,
-            }}
-            transition={{
-              duration: blob.duration,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            style={{
-              top: blob.top,
-              left: blob.left,
-              backgroundColor: ambientPalette[blob.tone],
-              filter: `blur(${isMobile ? blob.mobileBlur : blob.blur})`,
-              willChange: "transform",
-            }}
-            className={`pointer-events-none absolute ${
-              isMobile
-                ? `${blob.mobileW} ${blob.mobileH}`
-                : `${blob.w} ${blob.h}`
-            } rounded-full`}
-          />
-        ))}
+        {/* Soft Ambient Blue Glows (#4F75B0) — hanya tampil di Dark Mode */}
+        {isDarkMode &&
+          AMBIENT_BLOBS.map((blob, index) => (
+            <motion.div
+              key={index}
+              aria-hidden="true"
+              animate={{
+                x: blob.x,
+                y: blob.y,
+                scale: blob.scale,
+              }}
+              transition={{
+                duration: blob.duration,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{
+                top: blob.top,
+                left: blob.left,
+                backgroundColor: ambientPalette[blob.tone],
+                filter: `blur(${isMobile ? blob.mobileBlur : blob.blur})`,
+                willChange: "transform",
+              }}
+              className={`pointer-events-none absolute ${
+                isMobile
+                  ? `${blob.mobileW} ${blob.mobileH}`
+                  : `${blob.w} ${blob.h}`
+              } rounded-full`}
+            />
+          ))}
 
         <div className="relative z-10">
           <section id="welcome" className="bg-transparent">
