@@ -352,6 +352,31 @@ const WorkExperience_Section = ({ isDarkMode }) => {
     return () => unsubscribe();
   }, [animatedProgress, experiencePositions, viewMode]);
 
+  const touchStartRef = useRef({ x: 0, y: 0 });
+
+  const handleTouchStart = (e) => {
+    if (viewMode !== "timeline" || !e.touches?.[0]) return;
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchMove = (e) => {
+    if (viewMode !== "timeline" || !e.touches?.[0]) return;
+    if (e.cancelable) e.preventDefault();
+
+    const touch = e.touches[0];
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const dominantDelta =
+      Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
+    const sensitivity = 0.0025;
+
+    progress.set(
+      Math.min(1, Math.max(0, progress.get() - dominantDelta * sensitivity)),
+    );
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
   useEffect(() => {
     const handleWheel = (e) => {
       if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
@@ -360,8 +385,43 @@ const WorkExperience_Section = ({ isDarkMode }) => {
       const delta = e.deltaY * 0.0006;
       progress.set(Math.min(1, Math.max(0, progress.get() - delta)));
     };
+
+    const handleTouchStart = (e) => {
+      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
+        return;
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const handleTouchMove = (e) => {
+      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
+        return;
+      if (e.cancelable) e.preventDefault();
+
+      const touch = e.touches[0];
+      const deltaY = touch.clientY - touchStartRef.current.y;
+      const deltaX = touch.clientX - touchStartRef.current.x;
+
+      const dominantDelta =
+        Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
+      const sensitivity = 0.0025;
+
+      progress.set(
+        Math.min(1, Math.max(0, progress.get() - dominantDelta * sensitivity)),
+      );
+
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
     window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, [progress, viewMode]);
 
   useEffect(() => {
@@ -464,7 +524,13 @@ const WorkExperience_Section = ({ isDarkMode }) => {
 
           <div
             ref={containerRef}
-            className={`relative border ${isDarkMode ? "border-white/10" : "border-black/10"} rounded-2xl transition-all duration-500 overflow-hidden ${viewMode === "list" ? "h-auto max-h-[600px] overflow-y-auto" : "h-[400px] bg-zinc-500/5"}`}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            className={`relative border ${isDarkMode ? "border-white/10" : "border-black/10"} rounded-2xl transition-all duration-500 overflow-hidden ${
+              viewMode === "list"
+                ? "h-auto max-h-[600px] overflow-y-auto"
+                : "h-[400px] bg-zinc-500/5 touch-none"
+            }`}
           >
             {viewMode === "timeline" ? (
               <>
