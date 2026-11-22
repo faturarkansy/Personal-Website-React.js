@@ -174,24 +174,32 @@ const Portfolio_Section = ({ isDarkMode }) => {
 
   return (
     <div
-      className={`w-full flex transition-colors duration-300 ease-in-out font-sans ${isDarkMode ? "bg-black text-white" : "bg-white text-black"} ${isBelow920 ? "h-auto" : "min-h-screen"}`}
+      className={`w-full bg-transparent flex transition-colors duration-300 ease-in-out font-sans ${
+        isDarkMode ? "text-white" : "text-black"
+      } ${isBelow920 ? "h-auto" : "min-h-screen"}`}
     >
       {/* --- SIDEBAR SYNC (Sama dengan Services_Section) --- */}
       {!isMobile && (
         <div
-          className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
+          className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${
+            isDarkMode ? "border-white" : "border-black"
+          } ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
         />
       )}
 
       {/* --- MAIN CONTENT area (Menerapkan mx-12 lg:mx-20 seperti Services_Section) --- */}
       <div className="flex-1 flex flex-col min-w-0 px-6 sm:px-10 lg:px-16 py-16 overflow-x-clip">
         <div
-          className={`flex-1 flex flex-col ${isBelow920 ? "justify-start pt-10" : "justify-center"} max-w-7xl w-full`}
+          className={`flex-1 flex flex-col ${
+            isBelow920 ? "justify-start pt-10" : "justify-center"
+          } max-w-7xl w-full`}
         >
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className={`text-3xl lg:text-4xl font-bold mb-10 font-['Poppins'] ${isBelow920 ? "text-center lg:text-left" : ""}`}
+            className={`text-3xl lg:text-4xl font-bold mb-10 font-['Poppins'] ${
+              isBelow920 ? "text-center lg:text-left" : ""
+            }`}
           >
             My <span className="text-[#4F75B0]">Portfolio</span>
           </motion.h2>
@@ -233,7 +241,11 @@ const Portfolio_Section = ({ isDarkMode }) => {
                     {activeProject.tags?.map((tag, idx) => (
                       <div
                         key={idx}
-                        className={`p-1.5 rounded-lg border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
+                        className={`p-1.5 rounded-lg border ${
+                          isDarkMode
+                            ? "bg-zinc-900/80 border-zinc-800"
+                            : "bg-white/75 border-gray-200"
+                        }`}
                       >
                         {tag.icon && (
                           <tag.icon style={{ color: tag.color }} size={20} />
@@ -251,7 +263,11 @@ const Portfolio_Section = ({ isDarkMode }) => {
                   {activeProject.focus?.map((item, index) => (
                     <span
                       key={index}
-                      className={`px-4 py-1 rounded-full font-medium border text-xs ${isDarkMode ? "bg-white text-black" : "bg-black text-white"}`}
+                      className={`px-4 py-1 rounded-full font-medium border text-xs ${
+                        isDarkMode
+                          ? "bg-white text-black border-white"
+                          : "bg-black text-white border-black"
+                      }`}
                     >
                       {item}
                     </span>
@@ -292,7 +308,11 @@ const Portfolio_Section = ({ isDarkMode }) => {
                     whileHover={{ y: -8 }}
                     onClick={() => setSelectedId(project.id)}
                     style={{ cursor: customBlackCursor }}
-                    className={`flex-shrink-0 w-[240px] md:w-[280px] rounded-2xl overflow-hidden border transition-all group ${isDarkMode ? "bg-[#0A0A0A] border-white/5" : "bg-white border-black/5 shadow-sm"}`}
+                    className={`flex-shrink-0 w-[240px] md:w-[280px] rounded-2xl overflow-hidden border transition-all group ${
+                      isDarkMode
+                        ? "bg-[#0A0A0A]/75 border-white/10 hover:border-white/25"
+                        : "bg-white/75 border-black/10 hover:border-black/20 shadow-sm"
+                    }`}
                   >
                     <div className="h-36 overflow-hidden bg-zinc-900">
                       <img
@@ -311,7 +331,11 @@ const Portfolio_Section = ({ isDarkMode }) => {
                           {project.tags?.map((tag, idx) => (
                             <div
                               key={idx}
-                              className={`p-1 rounded-md border ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
+                              className={`p-1 rounded-md border ${
+                                isDarkMode
+                                  ? "bg-zinc-900/80 border-zinc-800"
+                                  : "bg-white/80 border-gray-200"
+                              }`}
                             >
                               {tag.icon && (
                                 <tag.icon
@@ -343,7 +367,9 @@ const Portfolio_Section = ({ isDarkMode }) => {
 
       <style>{`
                 .custom-scrollbar::-webkit-scrollbar { height: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: ${isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}; border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: ${
+                  isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
+                }; border-radius: 10px; }
                 .no-scrollbar::-webkit-scrollbar { display: none; }
                 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>

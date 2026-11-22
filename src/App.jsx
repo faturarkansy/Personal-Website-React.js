@@ -6,6 +6,7 @@ import TechStack_Section from "./TechStack_Section";
 import WorkExperience_Section from "./WorkExperience_Section";
 import Portfolio_Section from "./Portfolio_Section";
 import GithubActivity_Section from "./GithubActivity_Section";
+import Footer_Section from "./Footer_Section";
 
 const useScrollDirection = () => {
   const [scrollDirection, setScrollDirection] = useState("up");
@@ -29,6 +30,144 @@ const useScrollDirection = () => {
 
   return scrollDirection;
 };
+
+const AMBIENT_BLOBS = [
+  {
+    top: "23%",
+    left: "10%",
+    w: "w-[320px]",
+    h: "h-[260px]",
+    mobileW: "w-[130px]",
+    mobileH: "h-[110px]",
+    blur: "90px",
+    mobileBlur: "48px",
+    tone: "strong",
+    duration: 12.8,
+    x: [0, 230, -140, 175, 0],
+    y: [0, -115, 130, -65, 0],
+    scale: [1, 1.22, 0.88, 1.15, 1],
+  },
+  {
+    top: "27%",
+    left: "64%",
+    w: "w-[270px]",
+    h: "h-[210px]",
+    mobileW: "w-[135px]",
+    mobileH: "h-[140px]",
+    blur: "82px",
+    mobileBlur: "44px",
+    tone: "medium",
+    duration: 10.8,
+    x: [0, -220, 135, -95, 0],
+    y: [0, 115, -95, 70, 0],
+    scale: [1, 1.14, 0.9, 1.18, 1],
+  },
+  {
+    top: "37%",
+    left: "10%",
+    w: "w-[340px]",
+    h: "h-[230px]",
+    mobileW: "w-[160px]",
+    mobileH: "h-[155px]",
+    blur: "90px",
+    mobileBlur: "48px",
+    tone: "strong",
+    duration: 16.2,
+    x: [0, 240, -150, 180, 0],
+    y: [0, -120, 125, -80, 0],
+    scale: [1, 1.2, 0.88, 1.14, 1],
+  },
+  {
+    top: "45%",
+    left: "52%",
+    w: "w-[260px]",
+    h: "h-[250px]",
+    mobileW: "w-[120px]",
+    mobileH: "h-[115px]",
+    blur: "85px",
+    mobileBlur: "46px",
+    tone: "soft",
+    duration: 17.5,
+    x: [0, -195, 145, -130, 0],
+    y: [0, 130, -105, 85, 0],
+    scale: [1, 0.9, 1.22, 0.94, 1],
+  },
+  {
+    top: "55%",
+    left: "18%",
+    w: "w-[300px]",
+    h: "h-[240px]",
+    mobileW: "w-[150px]",
+    mobileH: "h-[150px]",
+    blur: "88px",
+    mobileBlur: "48px",
+    tone: "strong",
+    duration: 20.0,
+    x: [0, 215, -160, 150, 0],
+    y: [0, 120, -110, 75, 0],
+    scale: [1, 1.18, 0.9, 1.16, 1],
+  },
+  {
+    top: "63%",
+    left: "66%",
+    w: "w-[290px]",
+    h: "h-[220px]",
+    mobileW: "w-[120px]",
+    mobileH: "h-[95px]",
+    blur: "84px",
+    mobileBlur: "45px",
+    tone: "medium",
+    duration: 14.6,
+    x: [0, -230, 125, -140, 0],
+    y: [0, -115, 120, -70, 0],
+    scale: [1, 1.15, 0.89, 1.12, 1],
+  },
+  {
+    top: "73%",
+    left: "12%",
+    w: "w-[320px]",
+    h: "h-[250px]",
+    mobileW: "w-[160px]",
+    mobileH: "h-[160px]",
+    blur: "90px",
+    mobileBlur: "48px",
+    tone: "strong",
+    duration: 15.6,
+    x: [0, 225, -145, 170, 0],
+    y: [0, -125, 115, -75, 0],
+    scale: [1, 1.22, 0.88, 1.15, 1],
+  },
+  {
+    top: "81%",
+    left: "55%",
+    w: "w-[270px]",
+    h: "h-[220px]",
+    mobileW: "w-[140px]",
+    mobileH: "h-[160px]",
+    blur: "82px",
+    mobileBlur: "44px",
+    tone: "soft",
+    duration: 18.0,
+    x: [0, -200, 135, -125, 0],
+    y: [0, 110, -95, 80, 0],
+    scale: [1, 0.92, 1.18, 0.95, 1],
+  },
+  {
+    top: "90%",
+    left: "25%",
+    w: "w-[310px]",
+    h: "h-[230px]",
+    mobileW: "w-[130px]",
+    mobileH: "h-[100px]",
+    blur: "86px",
+    mobileBlur: "46px",
+    tone: "medium",
+    duration: 16.4,
+    x: [0, 185, -155, 145, 0],
+    y: [0, -100, 95, -65, 0],
+    scale: [1, 1.16, 0.9, 1.12, 1],
+  },
+];
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -171,9 +310,22 @@ function App() {
   const isTablet = windowWidth < 920;
   const isMobile = windowWidth < 430;
 
+  // Warna biru soft ambient (#4F75B0 = rgb(79, 117, 176)) yang lebih tebal
+  const ambientPalette = {
+    strong: isDarkMode
+      ? "rgba(79, 117, 176, 0.68)"
+      : "rgba(79, 117, 176, 0.50)",
+    medium: isDarkMode
+      ? "rgba(79, 117, 176, 0.56)"
+      : "rgba(79, 117, 176, 0.40)",
+    soft: isDarkMode ? "rgba(79, 117, 176, 0.46)" : "rgba(79, 117, 176, 0.32)",
+  };
+
   return (
     <div
-      className={`relative min-h-screen transition-colors duration-300 font-sans ${isDarkMode ? "bg-black" : "bg-white"}`}
+      className={`relative min-h-screen transition-colors duration-300 font-sans ${
+        isDarkMode ? "bg-black" : "bg-white"
+      }`}
     >
       <style>
         {`
@@ -394,29 +546,74 @@ function App() {
         </div>
       )}
 
-      {/* --- CONTENT --- */}
+      {/* --- SECTIONS CONTENT + ANIMATED SOFT AMBIENT (#4F75B0) --- */}
       <div
-        className={`w-full ${windowWidth >= 700 && windowWidth < 920 ? "pt-[50px]" : isMobile ? "pt-[70px]" : "pt-[0px]"}`}
+        className={`relative w-full overflow-hidden transition-colors duration-300 ${
+          isDarkMode ? "bg-black text-white" : "bg-white text-black"
+        } ${
+          windowWidth >= 700 && windowWidth < 920
+            ? "pt-[50px]"
+            : isMobile
+              ? "pt-[70px]"
+              : "pt-[0px]"
+        }`}
       >
-        <section id="welcome">
-          <Welcome_Section isDarkMode={isDarkMode} />
-        </section>
-        <section id="services">
-          <Services_Section isDarkMode={isDarkMode} />
-        </section>
-        <section id="techstack">
-          <TechStack_Section isDarkMode={isDarkMode} />
-        </section>
-        <section id="experience">
-          <WorkExperience_Section isDarkMode={isDarkMode} />
-        </section>
-        <section id="portfolio">
-          <Portfolio_Section isDarkMode={isDarkMode} />
-        </section>
-        <section id="githubactivity">
-          <GithubActivity_Section isDarkMode={isDarkMode} />
-        </section>
+        {/* Soft Ambient Blue Glows (#4F75B0) — ukuran mobile diperkecil, desktop dipertahankan */}
+        {AMBIENT_BLOBS.map((blob, index) => (
+          <motion.div
+            key={index}
+            aria-hidden="true"
+            animate={{
+              x: blob.x,
+              y: blob.y,
+              scale: blob.scale,
+            }}
+            transition={{
+              duration: blob.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            style={{
+              top: blob.top,
+              left: blob.left,
+              backgroundColor: ambientPalette[blob.tone],
+              filter: `blur(${isMobile ? blob.mobileBlur : blob.blur})`,
+              willChange: "transform",
+            }}
+            className={`pointer-events-none absolute ${
+              isMobile
+                ? `${blob.mobileW} ${blob.mobileH}`
+                : `${blob.w} ${blob.h}`
+            } rounded-full`}
+          />
+        ))}
+
+        <div className="relative z-10">
+          <section id="welcome" className="bg-transparent">
+            <Welcome_Section isDarkMode={isDarkMode} />
+          </section>
+          <section id="services" className="bg-transparent">
+            <Services_Section isDarkMode={isDarkMode} />
+          </section>
+          <section id="techstack" className="bg-transparent">
+            <TechStack_Section isDarkMode={isDarkMode} />
+          </section>
+          <section id="experience" className="bg-transparent">
+            <WorkExperience_Section isDarkMode={isDarkMode} />
+          </section>
+          <section id="portfolio" className="bg-transparent">
+            <Portfolio_Section isDarkMode={isDarkMode} />
+          </section>
+          <section id="githubactivity" className="bg-transparent">
+            <GithubActivity_Section isDarkMode={isDarkMode} />
+          </section>
+        </div>
       </div>
+
+      {/* --- FOOTER (DI LUAR AREA SOFT AMBIENT SECTION) --- */}
+      <section id="footer">
+        <Footer_Section isDarkMode={isDarkMode} />
+      </section>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 // --- KOMPONEN SPOTLIGHT CARD (Optimasi Layer & Scaling) ---
 const SpotlightCard = ({ children, isDarkMode, className = "" }) => {
@@ -120,12 +120,16 @@ const Services_Section = ({ isDarkMode }) => {
 
   return (
     <div
-      className={`w-full flex transition-colors duration-300 ease-in-out font-sans ${isDarkMode ? "bg-black text-white" : "bg-white text-black"} ${isBelow920 ? "h-auto" : "min-h-screen"}`}
+      className={`w-full bg-transparent flex transition-colors duration-300 ease-in-out font-sans ${
+        isDarkMode ? "text-white" : "text-black"
+      } ${isBelow920 ? "h-auto" : "min-h-screen"}`}
     >
       {/* --- SIDEBAR SYNC --- */}
       {!isMobile && (
         <div
-          className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
+          className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${
+            isDarkMode ? "border-white" : "border-black"
+          } ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
         />
       )}
 
@@ -174,13 +178,11 @@ const Services_Section = ({ isDarkMode }) => {
                 <SpotlightCard
                   key={idx}
                   isDarkMode={isDarkMode}
-                  className={`border p-5 flex flex-col gap-2 transition-all
-                                        ${
-                                          isDarkMode
-                                            ? "bg-[#0A0A0A]/80 border-white/10 hover:border-white/30"
-                                            : "bg-gray-50/80 border-black/5 hover:border-black/20"
-                                        }
-                                    `}
+                  className={`border p-5 flex flex-col gap-2 transition-all ${
+                    isDarkMode
+                      ? "bg-[#0A0A0A]/75 border-white/10 hover:border-white/30"
+                      : "bg-white/75 border-black/10 hover:border-black/25"
+                  }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <div className="text-[#4F75B0] scale-90 lg:scale-100">

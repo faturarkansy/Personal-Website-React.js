@@ -708,8 +708,8 @@ const WorkExperience_Section = ({ isDarkMode }) => {
 
   return (
     <div
-      className={`w-full h-auto flex transition-colors duration-300 font-sans ${
-        isDarkMode ? "bg-black text-white" : "bg-white text-black"
+      className={`w-full h-auto bg-transparent flex transition-colors duration-300 font-sans ${
+        isDarkMode ? "text-white" : "text-black"
       }`}
     >
       {/* --- LEFT SIDEBAR --- */}
@@ -893,34 +893,27 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm truncate font-['Poppins']">
-                            {exp.title}
-                          </h4>
-                          <p className="text-[11px] font-semibold opacity-80 flex items-center gap-2 truncate">
-                            <span
-                              className={`w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] ${
-                                isDarkMode ? "border-b-white" : "border-b-black"
-                              }`}
-                            />{" "}
+                        <div className="flex flex-col">
+                          <h4 className="font-bold text-sm leading-tight">
                             {exp.company}
+                          </h4>
+                          <p className="text-xs font-semibold text-[#4F75B0] mt-0.5">
+                            {exp.title}
                           </p>
-                          <p className="text-[10px] mt-0.5 opacity-40">
-                            {exp.startDate} – {formatFinishDate(exp.date)}
-                          </p>
+                          <div className="inline-flex items-center gap-1 text-[11px] opacity-65 mt-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>
+                              {exp.startDate} - {formatFinishDate(exp.date)}
+                            </span>
+                          </div>
                         </div>
                       </motion.div>
                     </div>
                   ))}
                 </motion.div>
-
-                <div className="absolute bottom-4 right-6 bg-[#4F75B0] text-white px-3 py-1 rounded-full text-[10px] font-black z-40 shadow-md">
-                  {Math.round(progress.get() * 100)}% JOURNEY
-                </div>
               </>
             ) : (
               <ExperienceListView
-                key={viewMode}
                 experiences={
                   viewMode === "professional"
                     ? professionalExperiences

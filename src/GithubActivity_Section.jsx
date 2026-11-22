@@ -333,7 +333,7 @@ export default function GithubActivity_Section({ isDarkMode }) {
       )}
 
       {/* --- MAIN CONTENT --- */}
-      <div className="flex-1 flex flex-col min-w-0 px-6 sm:px-10 lg:px-16 py-16">
+      <div className="flex-1 flex flex-col min-w-0 px-6 sm:px-10 lg:px-16 py-24 mb-8">
         <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 lg:gap-12 items-start">
           {/* KOLOM KIRI (DESKTOP: KIRI | MOBILE/TABLET: ATAS) */}
           <motion.div
