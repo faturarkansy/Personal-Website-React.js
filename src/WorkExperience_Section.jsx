@@ -271,7 +271,6 @@ const experiences = [
 const ITEM_WIDTH = 180;
 const ROW_HEIGHT = 110;
 const CONTAINER_HEIGHT = 900;
-const touchStartRef = useRef({ x: 0, y: 0 });
 
 const WorkExperience_Section = ({ isDarkMode }) => {
   const [viewMode, setViewMode] = useState("timeline");
@@ -353,8 +352,6 @@ const WorkExperience_Section = ({ isDarkMode }) => {
     return () => unsubscribe();
   }, [animatedProgress, experiencePositions, viewMode]);
 
-  const touchStartRef = useRef({ x: 0, y: 0 });
-
   useEffect(() => {
     const handleWheel = (e) => {
       if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
@@ -363,43 +360,8 @@ const WorkExperience_Section = ({ isDarkMode }) => {
       const delta = e.deltaY * 0.0006;
       progress.set(Math.min(1, Math.max(0, progress.get() - delta)));
     };
-
-    const handleTouchStart = (e) => {
-      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
-        return;
-      const touch = e.touches[0];
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
-    const handleTouchMove = (e) => {
-      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
-        return;
-      if (e.cancelable) e.preventDefault();
-
-      const touch = e.touches[0];
-      const deltaY = touch.clientY - touchStartRef.current.y;
-      const deltaX = touch.clientX - touchStartRef.current.x;
-
-      const dominantDelta =
-        Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
-      const sensitivity = 0.0025;
-
-      progress.set(
-        Math.min(1, Math.max(0, progress.get() - dominantDelta * sensitivity)),
-      );
-
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-    };
+    return () => window.removeEventListener("wheel", handleWheel);
   }, [progress, viewMode]);
 
   useEffect(() => {
@@ -443,17 +405,17 @@ const WorkExperience_Section = ({ isDarkMode }) => {
       {/* --- LEFT SIDEBAR: Lebar adaptif 90px -> 60px -> 0px --- */}
       {!isMobile && (
         <div
-          className={`border-r shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-15" : "w-22.5"}`}
+          className={`border-r flex-shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
         />
       )}
 
       <div
         className={`flex-1 flex flex-col min-w-0 px-10 lg:px-16 py-16 ${
           windowWidth > 920
-            ? "pt-22.5"
+            ? "pt-[90px]"
             : windowWidth <= 920 && windowWidth > 430
-              ? "pt-7.5"
-              : "pt-2.5"
+              ? "pt-[30px]"
+              : "pt-[10px]"
         } mb-24`}
       >
         <div
@@ -486,7 +448,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
           {/* SCROLL TEXT: Penyesuaian posisi responsif */}
           {viewMode === "timeline" && (
             <div
-              className={`absolute pointer-events-none z-60 transition-all ${isMobile ? -bottom - 2.5 - right - 2.5 : -bottom - 5 - right - 5}`}
+              className={`absolute pointer-events-none z-[60] transition-all ${isMobile ? "bottom-[-10px] right-[-10px]" : "bottom-[-20px] right-[-20px]"}`}
             >
               <img
                 src={
@@ -502,11 +464,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
 
           <div
             ref={containerRef}
-            className={`relative border ${isDarkMode ? "border-white/10" : "border-black/10"} rounded-2xl transition-all duration-500 overflow-hidden ${
-              viewMode === "list"
-                ? "h-auto max-h-150 overflow-y-auto"
-                : "h-100 bg-zinc-500/5 touch-none"
-            }`}
+            className={`relative border ${isDarkMode ? "border-white/10" : "border-black/10"} rounded-2xl transition-all duration-500 overflow-hidden ${viewMode === "list" ? "h-auto max-h-[600px] overflow-y-auto" : "h-[400px] bg-zinc-500/5"}`}
           >
             {viewMode === "timeline" ? (
               <>
@@ -517,7 +475,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                   {timelineItems.map((item, i) => (
                     <div
                       key={i}
-                      className="shrink-0 py-4 flex flex-col items-center"
+                      className="flex-shrink-0 py-4 flex flex-col items-center"
                       style={{ width: ITEM_WIDTH }}
                     >
                       <span
@@ -576,10 +534,10 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                     >
                       <div className="w-4 h-4 bg-white border-[3px] border-[#4F75B0] rounded-full -translate-x-1/2 -translate-y-1/2 z-20 shadow-sm" />
                       <motion.div
-                        className={`ml-6 flex items-center gap-3 px-4 py-3 rounded-xl border min-w-70 shadow-sm transition-all ${isDarkMode ? "bg-[#0A0A0A] border-white/10 text-white" : "bg-white border-black/5 text-black"}`}
+                        className={`ml-6 flex items-center gap-3 px-4 py-3 rounded-xl border min-w-[280px] shadow-sm transition-all ${isDarkMode ? "bg-[#0A0A0A] border-white/10 text-white" : "bg-white border-black/5 text-black"}`}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="w-12 h-12 shrink-0 flex items-center justify-center overflow-hidden rounded-lg bg-white p-1 border border-black/5">
+                        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg bg-white p-1 border border-black/5">
                           <img
                             src={exp.logoPath}
                             alt={exp.company}
@@ -592,7 +550,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                           </h4>
                           <p className="text-[11px] font-semibold opacity-80 flex items-center gap-2 truncate">
                             <span
-                              className={`w-0 h-0 border-l-8 border-l-transparent border-b-8 ${isDarkMode ? "border-b-white" : "border-b-black"}`}
+                              className={`w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] ${isDarkMode ? "border-b-white" : "border-b-black"}`}
                             />{" "}
                             {exp.company}
                           </p>
