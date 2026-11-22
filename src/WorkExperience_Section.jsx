@@ -4,9 +4,150 @@ import {
   AnimatePresence,
   useMotionValue,
   useSpring,
+  useScroll,
+  useTransform,
 } from "framer-motion";
+import { Calendar, ChevronDown } from "lucide-react";
 
-const experiences = [
+const PROFESSIONAL_COMPANIES = new Set([
+  "Nusantara Sakti Group",
+  "Ariftama Tekindo",
+  "DPMPPTSP Lampung Selatan",
+  "Init Visual Experia (INVIX)",
+  "Gink Technology",
+  "Sejahtera Perkasa Energi",
+]);
+
+const PROFESSIONAL_DESCRIPTIONS = {
+  "Nusantara Sakti Group": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Developed a Dealer Group Integration system using APIs to synchronize
+          multi-branch data, ensuring seamless business workflows and real-time
+          data availability across all company branches in Indonesia.
+        </li>
+        <li>
+          Performed company&apos;s Enterprise Resource Planning (ERP) system
+          maintenance, troubleshooting, testing, and enhancements to ensure
+          application reliability and performance, including streamlining core
+          accounting and financial workflow processes.
+        </li>
+      </ul>
+    </div>
+  ),
+  "Ariftama Tekindo": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Architected and developed a full-stack e-commerce mobile application
+          using Flutter and Express JS following the Extreme-Programming (XP)
+          methodology, streamlining core checkout workflows and payment gateways
+          to enhance transaction speed.
+        </li>
+        <li>
+          Ensured high backend reliability by executing 277 Jest unit tests with
+          a 100% pass rate, achieving over 80% function coverage on critical
+          modules.
+        </li>
+      </ul>
+    </div>
+  ),
+  "DPMPPTSP Lampung Selatan": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Engineered an interactive GIS (Geographic Information System) portal
+          using CodeIgniter 4 and Leaflet to map regional investment and
+          potential points across South Lampung for improving external investor
+          engagement and site navigation clarity.
+        </li>
+        <li>
+          Enhanced GIS spatial query execution by implementing spatial indexing,
+          reducing server response times by 40% during multilayer spatial
+          analysis requests.
+        </li>
+      </ul>
+    </div>
+  ),
+  "Init Visual Experia (INVIX)": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Developed responsive web frontend interfaces for core company products
+          and multiple client projects using React.js and integrating RESTful
+          APIs to ensure smooth data synchronization.
+        </li>
+        <li>
+          Supported the preparation of Software Requirement Specifications (SRS)
+          and project documentation by assisting in mapping core business
+          workflows into actionable technical specifications for the development
+          team.
+        </li>
+      </ul>
+    </div>
+  ),
+  "Gink Technology": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Engineered an automated real-time student attendance monitoring system
+          using Laravel (MVC architecture) and NFC hardware integration,
+          featuring real-time parent notification endpoints to deliver instant
+          daily check-in alerts.
+        </li>
+        <li>
+          Achieved 100% data logging accuracy for daily student check-ins by
+          implementing Unit and Integration Testing to validate API payloads and
+          database writes, eliminating manual data entry bottlenecks for
+          administrative staff.
+        </li>
+      </ul>
+    </div>
+  ),
+  "Sejahtera Perkasa Energi": (
+    <div>
+      <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
+        Activity details :{" "}
+      </p>
+      <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
+        <li>
+          Built a secure, high-performance web monitoring dashboard for
+          corporate administrators using React JS and Firebase under the Scrum
+          framework.
+        </li>
+        <li>
+          Successfully integrated web-based admin tools with existing React
+          Native mobile apps, enabling real-time data synchronization and
+          minimizing operational reporting delays by 15%.
+        </li>
+      </ul>
+    </div>
+  ),
+};
+
+const parseExpDateValue = (dateStr) => {
+  if (!dateStr || dateStr === "Present") return Number.MAX_SAFE_INTEGER;
+  const parsed = new Date(`${dateStr}-01`).getTime();
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const baseExperiences = [
   {
     id: 12,
     date: "2024-03",
@@ -45,7 +186,6 @@ const experiences = [
     title: "Frontend Web Developer",
     company: "Sejahtera Perkasa Energi",
     logoPath: "/images/Sejahtera_Perkasa_Energi.png",
-    desc: "Mengembangkan antarmuka landing page perusahaan menggunakan React dan Tailwind CSS dengan fokus pada responsivitas dan performa.",
   },
   {
     id: 10,
@@ -54,7 +194,6 @@ const experiences = [
     title: "Backend Web Developer Intern",
     company: "Gink Technology",
     logoPath: "/images/Gink.jpg",
-    desc: "Membangun RESTful API menggunakan Express.js, mengoptimalkan query database PostgreSQL, dan mengimplementasikan sistem autentikasi JWT.",
   },
   {
     id: 9,
@@ -124,36 +263,6 @@ const experiences = [
     title: "Frontend Web Developer Intern",
     company: "Init Visual Experia (INVIX)",
     logoPath: "/images/Invix.png",
-    desc: (
-      <div>
-        <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
-          Activity details :{" "}
-        </p>
-        <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
-          <li>
-            Develop on several company internal projects undertaken by the
-            company as frontend developer with <b>React.js</b>
-          </li>
-          <li>
-            Analyze system requirements, flow activities, and scope of system
-            usage.
-          </li>
-          <li>
-            Implementation of <b>Agile</b> methods in development that focuses
-            on client input regarding the dynamics of system needs in fast
-            projects.
-          </li>
-          <li>
-            Implementation of <b>Modified Waterfall</b> methods in internal
-            company service product development projects.
-          </li>
-          <li>
-            <b>Design UI/UX interfaces</b> in the early stages of development.
-          </li>
-          <li>Create documentation and user guide for a completed project.</li>
-        </ul>
-      </div>
-    ),
   },
   {
     id: 3,
@@ -162,45 +271,13 @@ const experiences = [
     title: "Web Developer",
     company: "DPMPPTSP Lampung Selatan",
     logoPath: "/images/DPMPPTSP_Lamsel.png",
-    desc: (
-      <div>
-        <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
-          Activity details :{" "}
-        </p>
-        <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
-          <li>
-            Developed a system to visualize the distribution of potential points
-            in South Lampung Regency.
-          </li>
-          <li>
-            Implementation of <b>Agile</b> methods in development that focuses
-            on client input regarding the dynamics of system needs.
-          </li>
-          <li>
-            <b>Design UI/UX interfaces</b> in the early stages of development.
-          </li>
-          <li>
-            Utilized <b>CodeIgniter 4</b> for backend and web framework
-            development.
-          </li>
-          <li>
-            Implemented <b>Leaflet.js</b> for interactive map visualization and
-            geolocation features.
-          </li>
-          <li>
-            Collaborated in designing data flow and optimizing performance for
-            map rendering.
-          </li>
-        </ul>
-      </div>
-    ),
   },
   {
     id: 2,
     date: "2025-12",
     startDate: "Feb 2025",
     title: "Surveyor Tracer Study",
-    company: "Karir & Alumni Itera",
+    company: "Karir & Alumni ITERA",
     logoPath: "/images/Karir_Alumni_ITERA.png",
     desc: (
       <div>
@@ -210,7 +287,7 @@ const experiences = [
         <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
           <li>
             <b>Collecting and analyzing data on alumni employment</b> to assess
-            the curriculum's alignment with industry needs.
+            the curriculum&apos;s alignment with industry needs.
           </li>
           <li>
             Data collection and analysis were conducted for several graduation
@@ -231,56 +308,249 @@ const experiences = [
     title: "Android Mobile Developer",
     company: "Ariftama Tekindo",
     logoPath: "/images/Ariftama_Tekindo.png",
-    desc: (
-      <div>
-        <p className="font-bold mb-2 text-[12px] lg:text-[14px]">
-          Activity details :{" "}
-        </p>
-        <ul className="list-disc ml-4 space-y-1 text-[12px] lg:text-[14px]">
-          <li>
-            Develop and maintain Android-based applications using{" "}
-            <b>Flutter and Express.js</b> for <b>e-commerce system.</b>
-          </li>
-          <li>
-            Implement <b>Extreme Programming (XP)</b> core practices with
-            Test-Driven Development (TDD), Continuous Integration (CI), Pair
-            Programming, and Small Releases.
-          </li>
-          <li>
-            <b>Design and improve the UI/UX interface</b> to ensure an intuitive
-            user experience on Android and web admin panels.
-          </li>
-          <li>
-            Develop and integrate <b>RESTful APIs</b> between frontend (Flutter)
-            and backend (Express.js) to support real-time data operations.
-          </li>
-          <li>
-            Build and optimize admin panel websites using Flutter Web, focusing
-            on responsive design and functionality.
-          </li>
-          <li>
-            Analyze, document, and adapt business process workflows to ensure
-            system alignment with company operations.
-          </li>
-        </ul>
-      </div>
-    ),
   },
-].sort((a, b) => new Date(a.date) - new Date(b.date));
+  {
+    id: 13,
+    date: "Present",
+    startDate: "Jul 2026",
+    title: "Programmer Junior",
+    company: "Nusantara Sakti Group",
+    logoPath: "/images/Nusantara_Sakti.jpg",
+  },
+]
+  .map((exp) => ({
+    ...exp,
+    desc: PROFESSIONAL_DESCRIPTIONS[exp.company] ?? exp.desc,
+  }))
+  .sort((a, b) => parseExpDateValue(a.date) - parseExpDateValue(b.date));
+
+const professionalExperiences = baseExperiences
+  .filter((exp) => PROFESSIONAL_COMPANIES.has(exp.company))
+  .map((exp) => ({
+    ...exp,
+    id: `pro-${exp.id}`,
+  }));
+
+const orgVolunteerExperiences = baseExperiences
+  .filter((exp) => !PROFESSIONAL_COMPANIES.has(exp.company))
+  .map((exp) => ({
+    ...exp,
+    id: `org-${exp.id}`,
+  }));
+
+const SWITCH_OPTIONS = [
+  { key: "professional", label: "Professional" },
+  { key: "org-volunteer", label: "Org/Volunteer" },
+  { key: "timeline", label: "Timeline" },
+];
 
 const ITEM_WIDTH = 180;
 const ROW_HEIGHT = 110;
 const CONTAINER_HEIGHT = 900;
 
+function ExperienceListView({
+  experiences,
+  isDarkMode,
+  expandedId,
+  toggleExpand,
+  formatFinishDate,
+  isMobile,
+}) {
+  const listWrapperRef = useRef(null);
+  const firstCardRef = useRef(null);
+  const lastCardRef = useRef(null);
+  const [lineMetrics, setLineMetrics] = useState({ top: 0, height: 0 });
+
+  const { scrollYProgress } = useScroll({
+    target: listWrapperRef,
+    offset: ["start center", "end center"],
+  });
+
+  // Garis biru penuh di dasar; lapisan abu-abu tumbuh dari 0% ke 100% dari atas ke bawah saat di-scroll
+  const pastGrayHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  const orderedExperiences = useMemo(
+    () => experiences.slice().reverse(),
+    [experiences],
+  );
+
+  useEffect(() => {
+    const updateLinePosition = () => {
+      const wrapperEl = listWrapperRef.current;
+      const firstEl = firstCardRef.current;
+      const lastEl = lastCardRef.current;
+      if (!wrapperEl || !firstEl || !lastEl) return;
+
+      const wrapperRect = wrapperEl.getBoundingClientRect();
+      const firstRect = firstEl.getBoundingClientRect();
+      const lastRect = lastEl.getBoundingClientRect();
+
+      const startCenterY =
+        firstRect.top - wrapperRect.top + firstRect.height / 2;
+      const endCenterY = lastRect.top - wrapperRect.top + lastRect.height / 2;
+
+      setLineMetrics({
+        top: Math.max(0, startCenterY),
+        height: Math.max(0, endCenterY - startCenterY),
+      });
+    };
+
+    updateLinePosition();
+
+    const resizeObserver = new ResizeObserver(updateLinePosition);
+    if (listWrapperRef.current) resizeObserver.observe(listWrapperRef.current);
+    if (firstCardRef.current) resizeObserver.observe(firstCardRef.current);
+    if (lastCardRef.current) resizeObserver.observe(lastCardRef.current);
+
+    window.addEventListener("resize", updateLinePosition);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateLinePosition);
+    };
+  }, [orderedExperiences.length, expandedId, isMobile]);
+
+  return (
+    <div ref={listWrapperRef} className="relative h-auto px-4 sm:px-8 py-6">
+      <div className="relative max-w-4xl mx-auto">
+        {/* Garis Vertikal Penghubung: Hanya dari tengah kartu pertama (atas) ke tengah kartu terakhir (bawah) */}
+        {lineMetrics.height > 0 && (
+          <div
+            aria-hidden="true"
+            style={{
+              top: `${lineMetrics.top}px`,
+              height: `${lineMetrics.height}px`,
+            }}
+            className="pointer-events-none left-1/2 -translate-x-1/2 w-[2px] z-0 absolute"
+          >
+            {/* Warna biru full */}
+            <div className="w-full h-full bg-[#4F75B0]" />
+
+            {/* Warna abu-abu dari atas ke bawah (kilas balik pengalaman yang telah lalu) */}
+            <motion.div
+              style={{ height: pastGrayHeight }}
+              className={`absolute top-0 left-0 w-full ${
+                isDarkMode ? "bg-zinc-500/80" : "bg-gray-400"
+              }`}
+            />
+          </div>
+        )}
+
+        <div className="relative z-10 flex flex-col gap-5">
+          {orderedExperiences.map((exp, idx) => {
+            const isEven = idx % 2 === 0;
+            const isExpanded = expandedId === exp.id;
+            const zigzagOffset = isMobile ? 0 : isEven ? -28 : 28;
+            const isFirst = idx === 0;
+            const isLast = idx === orderedExperiences.length - 1;
+
+            return (
+              <motion.div
+                key={exp.id}
+                ref={isFirst ? firstCardRef : isLast ? lastCardRef : null}
+                layout
+                initial={{ opacity: 0, y: 14, x: zigzagOffset }}
+                animate={{ opacity: 1, y: 0, x: zigzagOffset }}
+                transition={{ duration: 0.3 }}
+                className="w-full sm:w-[68%] md:w-[58%] lg:w-[52%] mx-auto"
+              >
+                <div
+                  onClick={() => toggleExpand(exp.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleExpand(exp.id);
+                    }
+                  }}
+                  className={`flex flex-col p-4 sm:p-5 rounded-2xl border shadow-sm cursor-pointer transition-all ${
+                    isDarkMode
+                      ? "bg-[#0A0A0A] border-white/10 hover:border-white/25 text-white"
+                      : "bg-white border-black/10 hover:border-black/20 text-black"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3.5 sm:gap-4 min-w-0">
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl bg-white flex items-center justify-center p-1.5 border border-black/10">
+                        <img
+                          src={exp.logoPath}
+                          alt={exp.company}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+
+                      <div className="flex flex-col min-w-0">
+                        <h3 className="font-bold text-sm sm:text-base leading-snug font-['Poppins']">
+                          {exp.company}
+                        </h3>
+                        <p className="text-xs font-semibold text-[#4F75B0] mt-0.5">
+                          {exp.title}
+                        </p>
+                        <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs opacity-65 mt-1">
+                          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>
+                            {exp.startDate} - {formatFinishDate(exp.date)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(exp.id);
+                      }}
+                      aria-label={
+                        isExpanded ? "Collapse detail" : "Expand detail"
+                      }
+                      className="p-1.5 rounded-lg opacity-65 hover:opacity-100 transition-all flex-shrink-0"
+                    >
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div
+                          className={`mt-4 pt-3.5 border-t text-xs sm:text-sm leading-relaxed opacity-80 font-['Poppins'] ${
+                            isDarkMode ? "border-white/10" : "border-black/10"
+                          }`}
+                        >
+                          {exp.desc}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const WorkExperience_Section = ({ isDarkMode }) => {
-  const [viewMode, setViewMode] = useState("timeline");
+  const [viewMode, setViewMode] = useState("professional");
   const [expandedId, setExpandedId] = useState(null);
   const containerRef = useRef(null);
   const svgRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // --- RESPONSIVE CONSTANTS ---
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -298,7 +568,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
   const timelineItems = useMemo(() => {
     const items = [];
     let curr = new Date("2024-01-01");
-    const end = new Date("2026-06-01");
+    const end = new Date("2026-12-01");
     while (curr <= end) {
       items.push({
         month: curr.toLocaleString("default", { month: "short" }),
@@ -313,10 +583,16 @@ const WorkExperience_Section = ({ isDarkMode }) => {
   const totalWidth = timelineItems.length * ITEM_WIDTH;
 
   const experiencePositions = useMemo(() => {
-    return experiences.map((exp, index) => {
+    return baseExperiences.map((exp, index) => {
       const monthIndex = timelineItems.findIndex((m) => m.key === exp.date);
+      const safeMonthIndex =
+        monthIndex >= 0 ? monthIndex : timelineItems.length - 1;
       const yPos = CONTAINER_HEIGHT - (index + 1) * ROW_HEIGHT;
-      return { ...exp, x: monthIndex * ITEM_WIDTH + ITEM_WIDTH / 2, y: yPos };
+      return {
+        ...exp,
+        x: safeMonthIndex * ITEM_WIDTH + ITEM_WIDTH / 2,
+        y: yPos,
+      };
     });
   }, [timelineItems]);
 
@@ -386,41 +662,9 @@ const WorkExperience_Section = ({ isDarkMode }) => {
       progress.set(Math.min(1, Math.max(0, progress.get() - delta)));
     };
 
-    const handleTouchStart = (e) => {
-      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
-        return;
-      const touch = e.touches[0];
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
-    const handleTouchMove = (e) => {
-      if (viewMode !== "timeline" || !containerRef.current?.contains(e.target))
-        return;
-      if (e.cancelable) e.preventDefault();
-
-      const touch = e.touches[0];
-      const deltaY = touch.clientY - touchStartRef.current.y;
-      const deltaX = touch.clientX - touchStartRef.current.x;
-
-      const dominantDelta =
-        Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;
-      const sensitivity = 0.0025;
-
-      progress.set(
-        Math.min(1, Math.max(0, progress.get() - dominantDelta * sensitivity)),
-      );
-
-      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-    };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-
     return () => {
       window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, [progress, viewMode]);
 
@@ -450,6 +694,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
   const translateY = containerSize.height / 2 - cameraPos.y;
 
   const formatFinishDate = (dateStr) => {
+    if (!dateStr || dateStr === "Present") return "Present";
     const d = new Date(dateStr + "-01");
     return d.toLocaleString("default", { month: "short", year: "numeric" });
   };
@@ -458,14 +703,21 @@ const WorkExperience_Section = ({ isDarkMode }) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const isListMode =
+    viewMode === "professional" || viewMode === "org-volunteer";
+
   return (
     <div
-      className={`w-full flex transition-colors duration-300 font-sans ${isDarkMode ? "bg-black text-white" : "bg-white text-black"} ${isBelow920 ? "h-auto" : "min-h-screen"}`}
+      className={`w-full h-auto flex transition-colors duration-300 font-sans ${
+        isDarkMode ? "bg-black text-white" : "bg-white text-black"
+      }`}
     >
-      {/* --- LEFT SIDEBAR: Lebar adaptif 90px -> 60px -> 0px --- */}
+      {/* --- LEFT SIDEBAR --- */}
       {!isMobile && (
         <div
-          className={`border-r flex-shrink-0 transition-all duration-300 ${isDarkMode ? "border-white" : "border-black"} ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
+          className={`border-r flex-shrink-0 transition-all duration-300 ${
+            isDarkMode ? "border-white" : "border-black"
+          } ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
         />
       )}
 
@@ -476,7 +728,7 @@ const WorkExperience_Section = ({ isDarkMode }) => {
             : windowWidth <= 920 && windowWidth > 430
               ? "pt-[30px]"
               : "pt-[10px]"
-        } mb-24`}
+        }`}
       >
         <div
           className={`flex mb-8 ${
@@ -488,37 +740,46 @@ const WorkExperience_Section = ({ isDarkMode }) => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className={`font-bold font-['Poppins'] ${isMidRange || isMobile ? "text-3xl" : "text-4xl"}`}
+            className={`font-bold font-['Poppins'] ${
+              isMidRange || isMobile ? "text-3xl" : "text-4xl"
+            }`}
           >
             Work <span className="text-[#4F75B0]">& Experience</span>
           </motion.h2>
 
           <div
-            className={`flex p-1 rounded-lg border ${
+            className={`flex flex-wrap p-1 rounded-lg border ${
               isMobile ? "w-fit" : ""
-            } ${isDarkMode ? "bg-zinc-900 border-zinc-800" : "bg-gray-100 border-gray-200"}`}
+            } ${
+              isDarkMode
+                ? "bg-zinc-900 border-zinc-800"
+                : "bg-gray-100 border-gray-200"
+            }`}
           >
-            {["timeline", "list"].map((mode) => (
+            {SWITCH_OPTIONS.map((option) => (
               <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all capitalize ${
-                  viewMode === mode
+                key={option.key}
+                onClick={() => setViewMode(option.key)}
+                className={`px-3.5 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-bold transition-all ${
+                  viewMode === option.key
                     ? "bg-[#4F75B0] text-white shadow-md"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                {mode}
+                {option.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="relative">
-          {/* SCROLL TEXT: Penyesuaian posisi responsif */}
+        <div className="relative h-auto">
           {viewMode === "timeline" && (
             <div
-              className={`absolute pointer-events-none z-[60] transition-all ${isMobile ? "bottom-[-10px] right-[-10px]" : "bottom-[-20px] right-[-20px]"}`}
+              className={`absolute pointer-events-none z-[60] transition-all ${
+                isMobile
+                  ? "bottom-[-10px] right-[-10px]"
+                  : "bottom-[-20px] right-[-20px]"
+              }`}
             >
               <img
                 src={
@@ -536,16 +797,20 @@ const WorkExperience_Section = ({ isDarkMode }) => {
             ref={containerRef}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
-            className={`relative border ${isDarkMode ? "border-white/10" : "border-black/10"} rounded-2xl transition-all duration-500 overflow-hidden ${
-              viewMode === "list"
-                ? "h-auto max-h-[600px] overflow-y-auto"
-                : "h-[400px] bg-zinc-500/5 touch-none"
+            className={`relative transition-all duration-500 ${
+              isListMode
+                ? "h-auto bg-transparent"
+                : `border ${
+                    isDarkMode ? "border-white/10" : "border-black/10"
+                  } rounded-2xl overflow-hidden h-[400px] bg-zinc-500/5 touch-none`
             }`}
           >
             {viewMode === "timeline" ? (
               <>
                 <motion.div
-                  className="absolute top-0 left-0 flex border-b ${isDarkMode ? 'border-white/10' : 'border-black/10'} backdrop-blur-md z-30"
+                  className={`absolute top-0 left-0 flex border-b ${
+                    isDarkMode ? "border-white/10" : "border-black/10"
+                  } backdrop-blur-md z-30`}
                   style={{ x: translateX }}
                 >
                   {timelineItems.map((item, i) => (
@@ -555,12 +820,16 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                       style={{ width: ITEM_WIDTH }}
                     >
                       <span
-                        className={`text-sm font-bold uppercase tracking-widest mb-1 ${item.month === "Jan" ? "text-[#4F75B0]" : "opacity-0"}`}
+                        className={`text-sm font-bold uppercase tracking-widest mb-1 ${
+                          item.month === "Jan" ? "text-[#4F75B0]" : "opacity-0"
+                        }`}
                       >
                         {item.year}
                       </span>
                       <span
-                        className={`text-xs font-bold ${isDarkMode ? "text-white/40" : "text-black/30"}`}
+                        className={`text-xs font-bold ${
+                          isDarkMode ? "text-white/40" : "text-black/30"
+                        }`}
                       >
                         {item.month}
                       </span>
@@ -610,7 +879,11 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                     >
                       <div className="w-4 h-4 bg-white border-[3px] border-[#4F75B0] rounded-full -translate-x-1/2 -translate-y-1/2 z-20 shadow-sm" />
                       <motion.div
-                        className={`ml-6 flex items-center gap-3 px-4 py-3 rounded-xl border min-w-[280px] shadow-sm transition-all ${isDarkMode ? "bg-[#0A0A0A] border-white/10 text-white" : "bg-white border-black/5 text-black"}`}
+                        className={`ml-6 flex items-center gap-3 px-4 py-3 rounded-xl border min-w-[280px] shadow-sm transition-all ${
+                          isDarkMode
+                            ? "bg-[#0A0A0A] border-white/10 text-white"
+                            : "bg-white border-black/5 text-black"
+                        }`}
                         whileHover={{ scale: 1.02 }}
                       >
                         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg bg-white p-1 border border-black/5">
@@ -626,7 +899,9 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                           </h4>
                           <p className="text-[11px] font-semibold opacity-80 flex items-center gap-2 truncate">
                             <span
-                              className={`w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] ${isDarkMode ? "border-b-white" : "border-b-black"}`}
+                              className={`w-0 h-0 border-l-[8px] border-l-transparent border-b-[8px] ${
+                                isDarkMode ? "border-b-white" : "border-b-black"
+                              }`}
                             />{" "}
                             {exp.company}
                           </p>
@@ -644,76 +919,19 @@ const WorkExperience_Section = ({ isDarkMode }) => {
                 </div>
               </>
             ) : (
-              <div className="flex flex-col gap-3 p-6">
-                {experiences
-                  .slice()
-                  .reverse()
-                  .map((exp) => (
-                    <motion.div
-                      key={exp.id}
-                      layout // Penting agar baris lain bergeser mulus saat satu baris memanjang
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex flex-col p-4 rounded-xl border transition-all ${
-                        isDarkMode
-                          ? "bg-zinc-900/40 border-white/5 hover:border-white/20"
-                          : "bg-gray-50 border-black/5 hover:border-black/10"
-                      }`}
-                    >
-                      {/* Header Baris: Selalu Muncul */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center p-1.5 border border-black/5">
-                            <img
-                              src={exp.logoPath}
-                              alt={exp.company}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <h3 className="font-bold text-sm lg:text-base leading-tight">
-                              {exp.title}
-                            </h3>
-                            <span className="text-[10px] lg:text-[12px] opacity-60 font-medium">
-                              {exp.company}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end">
-                          <div className="text-[10px] lg:text-[12px] font-bold opacity-60 font-mono">
-                            {exp.startDate} - {formatFinishDate(exp.date)}
-                          </div>
-                          <button
-                            onClick={() => toggleExpand(exp.id)}
-                            className="text-[11px] lg:text-[13px] font-bold text-[#4F75B0] hover:underline transition-all"
-                          >
-                            {expandedId === exp.id
-                              ? "Close Detail"
-                              : "Show Detail"}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Bagian Deskripsi: Hanya muncul jika expandedId cocok */}
-                      <AnimatePresence>
-                        {expandedId === exp.id && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                          >
-                            <div className="mt-4 pt-4 border-t border-gray-800/10 text-xs lg:text-sm leading-relaxed opacity-70 font-['Poppins']">
-                              {exp.desc}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  ))}
-              </div>
+              <ExperienceListView
+                key={viewMode}
+                experiences={
+                  viewMode === "professional"
+                    ? professionalExperiences
+                    : orgVolunteerExperiences
+                }
+                isDarkMode={isDarkMode}
+                expandedId={expandedId}
+                toggleExpand={toggleExpand}
+                formatFinishDate={formatFinishDate}
+                isMobile={isMobile}
+              />
             )}
           </div>
         </div>

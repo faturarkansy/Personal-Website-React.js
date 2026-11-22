@@ -111,6 +111,7 @@ function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 18, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -12, scale: 0.98 }}
       viewport={{ once: false, amount: "some" }}
       transition={{ duration: 0.4, delay, ease: "easeOut" }}
       className={`p-4 sm:p-6 rounded-2xl border transition-colors ${
@@ -176,78 +177,120 @@ function Heatmap({ calendar, isDarkMode }) {
   const weekStepSm = 14;
 
   return (
-    <div className="overflow-x-auto -mx-1 px-1 touch-pan-x">
-      <div className="inline-block min-w-[520px] sm:min-w-[640px]">
-        <div className="relative h-4 mb-1.5 ml-7 sm:ml-8">
-          {monthLabels.map((m) => (
-            <span
-              key={`${m.label}-${m.weekIndex}`}
-              className="absolute top-0 text-[9px] sm:text-[10px] opacity-60 sm:hidden"
-              style={{ left: m.weekIndex * weekStep }}
-            >
-              {m.label}
-            </span>
-          ))}
-          {monthLabels.map((m) => (
-            <span
-              key={`sm-${m.label}-${m.weekIndex}`}
-              className="absolute top-0 text-[10px] opacity-60 hidden sm:block"
-              style={{ left: m.weekIndex * weekStepSm }}
-            >
-              {m.label}
-            </span>
-          ))}
-        </div>
+    <>
+      <style>
+        {`
+          .heatmap-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: ${
+              isDarkMode
+                ? "rgba(255, 255, 255, 0.22) transparent"
+                : "rgba(0, 0, 0, 0.22) transparent"
+            };
+          }
+          .heatmap-scroll::-webkit-scrollbar {
+            height: 5px;
+          }
+          .heatmap-scroll::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .heatmap-scroll::-webkit-scrollbar-thumb {
+            background-color: ${
+              isDarkMode ? "rgba(255, 255, 255, 0.22)" : "rgba(0, 0, 0, 0.22)"
+            };
+            border-radius: 9999px;
+          }
+          .heatmap-scroll::-webkit-scrollbar-thumb:hover {
+            background-color: ${
+              isDarkMode ? "rgba(255, 255, 255, 0.38)" : "rgba(0, 0, 0, 0.38)"
+            };
+          }
+        `}
+      </style>
 
-        <div className={`flex ${gap}`}>
-          <div className={`flex flex-col pr-1.5 sm:pr-2 shrink-0 ${gap}`}>
-            {WEEKDAYS.map((d, i) => (
-              <div
-                key={i}
-                className="h-[10px] sm:h-[11px] w-5 sm:w-6 text-[9px] sm:text-[10px] leading-[10px] sm:leading-[11px] opacity-60"
+      <div className="heatmap-scroll overflow-x-auto -mx-1 px-1 pb-1.5 touch-pan-x">
+        <div className="inline-block min-w-[520px] sm:min-w-[640px]">
+          <div className="relative h-4 mb-1.5 ml-7 sm:ml-8">
+            {monthLabels.map((m) => (
+              <span
+                key={`${m.label}-${m.weekIndex}`}
+                className="absolute top-0 text-[9px] sm:text-[10px] opacity-60 sm:hidden"
+                style={{ left: m.weekIndex * weekStep }}
               >
-                {d}
+                {m.label}
+              </span>
+            ))}
+            {monthLabels.map((m) => (
+              <span
+                key={`sm-${m.label}-${m.weekIndex}`}
+                className="absolute top-0 text-[10px] opacity-60 hidden sm:block"
+                style={{ left: m.weekIndex * weekStepSm }}
+              >
+                {m.label}
+              </span>
+            ))}
+          </div>
+
+          <div className={`flex ${gap}`}>
+            <div className={`flex flex-col pr-1.5 sm:pr-2 shrink-0 ${gap}`}>
+              {WEEKDAYS.map((d, i) => (
+                <div
+                  key={i}
+                  className="h-[10px] sm:h-[11px] w-5 sm:w-6 text-[9px] sm:text-[10px] leading-[10px] sm:leading-[11px] opacity-60"
+                >
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            {weeks.map((week, wi) => (
+              <div key={wi} className={`flex flex-col ${gap}`}>
+                {week.map((day) => {
+                  const level = intensity(day.count, max);
+                  const future = day.date > startOfDay(new Date());
+                  return (
+                    <div
+                      key={day.key}
+                      title={
+                        future
+                          ? undefined
+                          : `${day.key}: ${day.count} contribution${day.count === 1 ? "" : "s"}`
+                      }
+                      className={`${cell} rounded-[2px] transition-colors ${
+                        future ? "bg-transparent" : levelClasses[level]
+                      }`}
+                    />
+                  );
+                })}
               </div>
             ))}
           </div>
 
-          {weeks.map((week, wi) => (
-            <div key={wi} className={`flex flex-col ${gap}`}>
-              {week.map((day) => {
-                const level = intensity(day.count, max);
-                const future = day.date > startOfDay(new Date());
-                return (
-                  <div
-                    key={day.key}
-                    title={
-                      future
-                        ? undefined
-                        : `${day.key}: ${day.count} contribution${day.count === 1 ? "" : "s"}`
-                    }
-                    className={`${cell} rounded-[2px] transition-colors ${
-                      future ? "bg-transparent" : levelClasses[level]
-                    }`}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-3 sm:mt-4 flex items-center justify-end gap-1.5 text-[9px] sm:text-[10px] opacity-60">
-          <span>Less</span>
-          {levelClasses.map((cls, i) => (
-            <span key={i} className={`${cell} rounded-[2px] ${cls}`} />
-          ))}
-          <span>More</span>
+          <div className="mt-3 sm:mt-4 flex items-center justify-end gap-1.5 text-[9px] sm:text-[10px] opacity-60">
+            <span>Less</span>
+            {levelClasses.map((cls, i) => (
+              <span key={i} className={`${cell} rounded-[2px] ${cls}`} />
+            ))}
+            <span>More</span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 export default function GithubActivity_Section({ isDarkMode }) {
   const [state, setState] = useState({ status: "loading" });
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 430;
+  const isTabletRange = windowWidth <= 920 && windowWidth > 430;
 
   useEffect(() => {
     let cancelled = false;
@@ -276,140 +319,165 @@ export default function GithubActivity_Section({ isDarkMode }) {
 
   return (
     <section
-      className={`w-full px-6 sm:px-10 lg:px-16 py-16 transition-colors duration-300 overflow-x-clip ${
+      className={`w-full flex transition-colors duration-300 font-sans overflow-x-clip ${
         isDarkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
-      <div className="max-w-6xl mx-auto space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: "some" }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="flex flex-wrap items-center justify-between gap-4"
-        >
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#4F75B0]">
-              Activity
+      {/* --- LEFT SIDEBAR BORDER --- */}
+      {!isMobile && (
+        <div
+          className={`flex flex-col items-center border-r flex-shrink-0 transition-all duration-300 ${
+            isDarkMode ? "border-white" : "border-black"
+          } ${isTabletRange ? "w-[60px]" : "w-[90px]"}`}
+        />
+      )}
+
+      {/* --- MAIN CONTENT --- */}
+      <div className="flex-1 flex flex-col min-w-0 px-6 sm:px-10 lg:px-16 py-16">
+        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 lg:gap-12 items-start">
+          {/* KOLOM KIRI (DESKTOP: KIRI | MOBILE/TABLET: ATAS) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            viewport={{ once: false, amount: "some" }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            className="space-y-4"
+          >
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold font-['Poppins']">
+                GitHub <span className="text-[#4F75B0]">Activity</span>
+              </h2>
+              <div className="mt-2.5 h-1.5 w-16 sm:w-20 rounded-none bg-[#4F75B0]" />
+            </div>
+
+            <p className="text-sm opacity-75 leading-relaxed">
+              Live metrics from GitHub — repositories, commits, and 12-month
+              contribution activity.
             </p>
-            <h2 className="text-3xl sm:text-4xl font-bold font-['Poppins'] mt-1">
-              GitHub <span className="text-[#4F75B0]">Activity</span>
-            </h2>
-          </div>
 
-          {state.status === "ready" && (
-            <a
-              href={state.data.profileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#4F75B0] hover:underline"
-            >
-              <GithubMark className="h-4 w-4" />@{state.data.username}
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
-        </motion.div>
+            {state.status === "ready" && (
+              <a
+                href={state.data.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[#4F75B0] hover:underline"
+              >
+                <GithubMark className="h-4 w-4" />@{state.data.username}
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </motion.div>
 
-        {state.status === "loading" && (
-          <div className="space-y-4 animate-pulse">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              {[0, 1, 2].map((i) => (
+          {/* KOLOM KANAN (DESKTOP: KANAN | MOBILE/TABLET: BAWAH) */}
+          <div className="min-w-0">
+            {state.status === "loading" && (
+              <div className="space-y-4 animate-pulse">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className={`h-24 rounded-2xl border ${
+                        i === 2 ? "col-span-2 sm:col-span-1" : ""
+                      } ${
+                        isDarkMode
+                          ? "bg-zinc-900/40 border-white/10"
+                          : "bg-gray-100 border-black/10"
+                      }`}
+                    />
+                  ))}
+                </div>
                 <div
-                  key={i}
-                  className={`h-24 rounded-2xl border ${
-                    i === 2 ? "col-span-2 sm:col-span-1" : ""
-                  } ${
+                  className={`h-40 rounded-2xl border ${
                     isDarkMode
                       ? "bg-zinc-900/40 border-white/10"
                       : "bg-gray-100 border-black/10"
                   }`}
                 />
-              ))}
-            </div>
-            <div
-              className={`h-40 rounded-2xl border ${
-                isDarkMode
-                  ? "bg-zinc-900/40 border-white/10"
-                  : "bg-gray-100 border-black/10"
-              }`}
-            />
-          </div>
-        )}
-
-        {state.status === "error" && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: "some" }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className={`p-6 rounded-2xl border ${
-              isDarkMode
-                ? "bg-zinc-900/50 border-white/10"
-                : "bg-gray-50 border-black/10"
-            }`}
-          >
-            <p className="text-sm opacity-80">
-              Gagal memuat data aktivitas GitHub saat ini.
-            </p>
-            <p className="mt-2 text-xs opacity-60 break-words">
-              {state.message}
-            </p>
-          </motion.div>
-        )}
-
-        {state.status === "ready" && (
-          <div className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
-              <StatCard
-                label="Repositories"
-                value={state.data.projects}
-                icon={FolderGit2}
-                delay={0}
-                isDarkMode={isDarkMode}
-              />
-              <StatCard
-                label="Commits"
-                value={state.data.commits}
-                icon={GitCommitHorizontal}
-                delay={0.05}
-                isDarkMode={isDarkMode}
-              />
-              <StatCard
-                label="Pushes"
-                value={state.data.pushes}
-                icon={ArrowUpFromLine}
-                delay={0.1}
-                isDarkMode={isDarkMode}
-                className="col-span-2 sm:col-span-1"
-              />
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.98 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: false, amount: "some" }}
-              transition={{ duration: 0.45, delay: 0.12, ease: "easeOut" }}
-              className={`p-4 sm:p-6 rounded-2xl border ${
-                isDarkMode
-                  ? "bg-zinc-900/60 border-white/10"
-                  : "bg-gray-50 border-black/10"
-              }`}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
-                <div>
-                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] opacity-60">
-                    Contribution activity
-                  </p>
-                  <p className="mt-1 text-xs sm:text-sm opacity-70">
-                    Last 12 months on GitHub
-                  </p>
-                </div>
               </div>
+            )}
 
-              <Heatmap calendar={state.data.calendar} isDarkMode={isDarkMode} />
-            </motion.div>
+            {state.status === "error" && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                viewport={{ once: false, amount: "some" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className={`p-6 rounded-2xl border ${
+                  isDarkMode
+                    ? "bg-zinc-900/50 border-white/10"
+                    : "bg-gray-50 border-black/10"
+                }`}
+              >
+                <p className="text-sm opacity-80">
+                  Gagal memuat data aktivitas GitHub saat ini.
+                </p>
+                <p className="mt-2 text-xs opacity-60 break-words">
+                  {state.message}
+                </p>
+              </motion.div>
+            )}
+
+            {state.status === "ready" && (
+              <div className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+                  <StatCard
+                    label="Repositories"
+                    value={state.data.projects}
+                    icon={FolderGit2}
+                    delay={0}
+                    isDarkMode={isDarkMode}
+                  />
+                  <StatCard
+                    label="Commits (12M)"
+                    value={state.data.commits}
+                    icon={GitCommitHorizontal}
+                    delay={0.05}
+                    isDarkMode={isDarkMode}
+                  />
+                  <StatCard
+                    label="Active Days (12M)"
+                    value={state.data.pushes}
+                    icon={ArrowUpFromLine}
+                    delay={0.1}
+                    isDarkMode={isDarkMode}
+                    className="col-span-2 sm:col-span-1"
+                  />
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                  viewport={{ once: false, amount: "some" }}
+                  transition={{ duration: 0.45, delay: 0.12, ease: "easeOut" }}
+                  className={`p-4 sm:p-6 rounded-2xl border ${
+                    isDarkMode
+                      ? "bg-zinc-900/60 border-white/10"
+                      : "bg-gray-50 border-black/10"
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4 sm:mb-5">
+                    <div>
+                      <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] opacity-60">
+                        Contribution activity
+                      </p>
+                      <p className="mt-1 text-xs sm:text-sm opacity-70">
+                        Last 12 months on GitHub
+                      </p>
+                    </div>
+                  </div>
+
+                  <Heatmap
+                    calendar={state.data.calendar}
+                    isDarkMode={isDarkMode}
+                  />
+                </motion.div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
